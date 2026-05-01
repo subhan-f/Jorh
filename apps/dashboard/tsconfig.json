@@ -1,0 +1,10 @@
+{
+  "extends": "@jorh/tsconfig/react.json",
+  "include": ["src", "vite.config.ts"],
+  "compilerOptions": {
+    "outDir": "dist",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}

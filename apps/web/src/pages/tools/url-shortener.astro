@@ -1,0 +1,120 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Nav from "../../components/Nav.astro";
+import Footer from "../../components/Footer.astro";
+---
+
+<Layout
+  title="Free URL Shortener — Jorh"
+  description="Shorten any long URL into a clean, trackable link. Custom slugs, analytics, and QR codes included. Free forever."
+>
+  <Nav />
+
+  <main class="px-4 py-16 sm:px-6">
+    <div class="mx-auto max-w-2xl">
+      <div class="mb-10 text-center">
+        <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">Free URL Shortener</h1>
+        <p class="mt-3 text-muted-foreground">
+          Turn any long URL into a short, trackable Jorh link. No sign-up required for basic use.
+        </p>
+      </div>
+
+      <!-- Interactive tool (React island) -->
+      <div
+        class="rounded-2xl border border-border bg-card p-6 shadow-sm"
+        id="url-shortener-tool"
+      >
+        <div class="space-y-4">
+          <div class="flex gap-2">
+            <input
+              id="url-input"
+              type="url"
+              placeholder="Paste your long URL here..."
+              class="flex h-11 w-full rounded-xl border border-border bg-background px-4 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+            />
+            <button
+              id="shorten-btn"
+              class="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground whitespace-nowrap hover:opacity-90 transition-opacity"
+            >
+              Shorten
+            </button>
+          </div>
+          <p id="result" class="hidden text-sm"></p>
+          <p class="text-xs text-muted-foreground text-center">
+            Sign in for custom slugs, analytics & more →{" "}
+            <a href="https://app.jorh.net" class="text-primary underline underline-offset-4">Get started free</a>
+          </p>
+        </div>
+      </div>
+
+      <!-- SEO content -->
+      <section class="mt-16 space-y-12">
+        <div>
+          <h2 class="mb-4 text-2xl font-bold">Why use Jorh's URL Shortener?</h2>
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {[
+              { title: "Lightning fast redirects", body: "Powered by Cloudflare Workers — your links redirect in under 50ms from anywhere in the world." },
+              { title: "Click analytics", body: "See every click with country, device, browser, and referrer data. Know exactly how your links perform." },
+              { title: "Custom slugs", body: "Create memorable links like jorh.net/my-campaign instead of random codes. Available on free plan." },
+              { title: "QR codes included", body: "Every short link comes with a downloadable QR code. Perfect for print materials and in-person sharing." },
+            ].map(f => (
+              <div class="rounded-xl border border-border p-4">
+                <h3 class="mb-1 font-semibold">{f.title}</h3>
+                <p class="text-sm text-muted-foreground">{f.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  const btn = document.getElementById("shorten-btn");
+  const input = document.getElementById("url-input") as HTMLInputElement;
+  const result = document.getElementById("result");
+
+  btn?.addEventListener("click", async () => {
+    const url = input?.value.trim();
+    if (!url || !result) return;
+
+    try {
+      new URL(url);
+    } catch {
+      result.textContent = "⚠️ Please enter a valid URL starting with https://";
+      result.className = "text-sm text-destructive";
+      result.classList.remove("hidden");
+      return;
+    }
+
+    btn.textContent = "Shortening…";
+    (btn as HTMLButtonElement).disabled = true;
+
+    try {
+      const res = await fetch(`${import.meta.env.PUBLIC_API_URL ?? "http://localhost:3002"}/tools/shorten`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url }),
+      });
+
+      if (!res.ok) throw new Error("Failed");
+      const { data } = await res.json();
+
+      result.innerHTML = `
+        Short link created: <a href="${data.shortUrl}" target="_blank" class="text-primary underline">${data.shortUrl}</a>
+        — <button onclick="navigator.clipboard.writeText('${data.shortUrl}')" class="text-primary underline">Copy</button>
+      `;
+      result.className = "text-sm text-foreground";
+    } catch {
+      result.textContent = "Sign in to create short links and access analytics.";
+      result.className = "text-sm text-muted-foreground";
+    } finally {
+      result.classList.remove("hidden");
+      btn.textContent = "Shorten";
+      (btn as HTMLButtonElement).disabled = false;
+    }
+  });
+</script>

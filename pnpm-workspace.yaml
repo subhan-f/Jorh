@@ -1,0 +1,10 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+  - 'packages/config/*'
+allowBuilds:
+  '@firebase/util': false
+  esbuild: true
+  protobufjs: true
+  sharp: true
+  workerd: true

@@ -1,0 +1,9 @@
+{
+  "name": "@jorh/tailwind-config",
+  "version": "0.0.1",
+  "private": true,
+  "license": "MIT",
+  "exports": {
+    "./globals.css": "./globals.css"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "@jorh/firebase",
+  "version": "0.0.1",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./auth": "./src/auth.ts",
+    "./firestore": "./src/firestore.ts",
+    "./storage": "./src/storage.ts",
+    "./app": "./src/app.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "firebase": "^11.2.0"
+  },
+  "devDependencies": {
+    "@jorh/tsconfig": "workspace:*",
+    "typescript": "^5.7.2"
+  }
+}

@@ -1,0 +1,108 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Nav from "../../components/Nav.astro";
+import Footer from "../../components/Footer.astro";
+---
+
+<Layout
+  title="WhatsApp Link Generator — Jorh"
+  description="Create a WhatsApp click-to-chat link with a pre-filled message. Free, instant, no sign-up required."
+>
+  <Nav />
+
+  <main class="px-4 py-16 sm:px-6">
+    <div class="mx-auto max-w-2xl">
+      <div class="mb-10 text-center">
+        <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">WhatsApp Link Generator</h1>
+        <p class="mt-3 text-muted-foreground">
+          Create a WhatsApp link with a pre-filled message. Paste it anywhere — when someone clicks it,
+          WhatsApp opens with your message ready to send.
+        </p>
+      </div>
+
+      <div class="rounded-2xl border border-border bg-card p-6 shadow-sm">
+        <div class="space-y-4">
+          <div>
+            <label class="mb-1.5 block text-sm font-medium">Phone number (with country code)</label>
+            <input
+              id="wa-phone"
+              type="tel"
+              placeholder="+1 234 567 8900"
+              class="flex h-11 w-full rounded-xl border border-border bg-background px-4 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+            />
+          </div>
+
+          <div>
+            <label class="mb-1.5 block text-sm font-medium">Pre-filled message (optional)</label>
+            <textarea
+              id="wa-message"
+              rows={3}
+              placeholder="Hi! I'd like to inquire about..."
+              class="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none"
+            ></textarea>
+          </div>
+
+          <button
+            id="wa-generate"
+            class="w-full rounded-xl bg-[#25D366] py-2.5 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
+          >
+            Generate WhatsApp Link
+          </button>
+
+          <div id="wa-result" class="hidden rounded-xl border border-border bg-muted/30 p-4">
+            <p class="mb-2 text-xs font-medium text-muted-foreground uppercase tracking-wide">Your link</p>
+            <div class="flex items-center gap-2">
+              <code id="wa-link" class="flex-1 break-all text-sm text-foreground"></code>
+              <button
+                id="wa-copy"
+                class="shrink-0 rounded-lg border border-border px-3 py-1.5 text-xs font-medium hover:bg-muted transition-colors"
+              >
+                Copy
+              </button>
+            </div>
+            <a
+              id="wa-test"
+              href="#"
+              target="_blank"
+              class="mt-3 inline-flex items-center gap-1 text-xs text-[#25D366] hover:underline"
+            >
+              Test link →
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  import { buildWhatsAppLink } from "@jorh/utils";
+
+  const generateBtn = document.getElementById("wa-generate");
+  const phoneInput = document.getElementById("wa-phone") as HTMLInputElement;
+  const messageInput = document.getElementById("wa-message") as HTMLTextAreaElement;
+  const result = document.getElementById("wa-result");
+  const linkEl = document.getElementById("wa-link");
+  const copyBtn = document.getElementById("wa-copy");
+  const testLink = document.getElementById("wa-test") as HTMLAnchorElement;
+
+  generateBtn?.addEventListener("click", () => {
+    const phone = phoneInput.value.trim();
+    if (!phone) return;
+
+    const url = buildWhatsAppLink(phone, messageInput.value.trim() || undefined);
+
+    if (linkEl) linkEl.textContent = url;
+    if (testLink) testLink.href = url;
+    result?.classList.remove("hidden");
+  });
+
+  copyBtn?.addEventListener("click", async () => {
+    const text = linkEl?.textContent ?? "";
+    await navigator.clipboard.writeText(text);
+    if (copyBtn) copyBtn.textContent = "Copied!";
+    setTimeout(() => { if (copyBtn) copyBtn.textContent = "Copy"; }, 2000);
+  });
+</script>

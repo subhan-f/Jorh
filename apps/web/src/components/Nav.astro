@@ -1,0 +1,51 @@
+---
+const navLinks = [
+  { href: "/tools/url-shortener", label: "URL Shortener" },
+  { href: "/tools/qr-generator", label: "QR Code" },
+  { href: "/tools/whatsapp", label: "WhatsApp" },
+  { href: "/pricing", label: "Pricing" },
+];
+---
+
+<header class="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-md">
+  <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
+    <a href="/" class="flex items-center gap-2">
+      <span
+        class="bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-xl font-bold text-transparent"
+      >
+        Jorh
+      </span>
+      <span class="hidden text-xs text-muted-foreground sm:inline">.net</span>
+    </a>
+
+    <ul class="hidden items-center gap-6 md:flex">
+      {
+        navLinks.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              class="text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="flex items-center gap-3">
+      <a
+        href="https://app.jorh.net/login"
+        class="text-sm text-muted-foreground transition-colors hover:text-foreground"
+      >
+        Sign in
+      </a>
+      <a
+        href="https://app.jorh.net/register"
+        class="rounded-lg bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
+      >
+        Get started free
+      </a>
+    </div>
+  </nav>
+</header>
