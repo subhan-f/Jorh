@@ -1,4 +1,4 @@
-# Jorh.net — Master Product Roadmap
+# Jorh — Master Product Roadmap
 
 ## Vision
 

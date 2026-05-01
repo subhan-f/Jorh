@@ -1,4 +1,4 @@
-# Jorh.net — Go-To-Market Strategy
+# Jorh — Go-To-Market Strategy
 
 ## Positioning
 

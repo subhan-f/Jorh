@@ -15,7 +15,7 @@ Ship a working, publicly accessible product with the highest-value tools. Valida
 Set up the entire project infrastructure before writing any feature code.
 
 ```
-jorh.net/
+jorh/
 ├── apps/
 │   ├── web/          # Astro 4 marketing site
 │   ├── dashboard/    # React 19 + Vite dashboard

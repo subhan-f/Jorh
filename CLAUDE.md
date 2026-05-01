@@ -1,8 +1,8 @@
-# Jorh.net — Claude Context
+# Jorh — Claude Context
 
 ## Project Identity
 
-**Name:** Jorh.net
+**Name:** Jorh
 **Meaning:** "Jorh" (جوڑ) is an Urdu word meaning *link*, *bond*, or *connection*.
 **Tagline:** "Every link, beautifully managed."
 **Domain:** jorh.net
@@ -19,7 +19,7 @@ The goal is to compete with Bitly, Linktree, and QRCode generators by offering *
 ## Monorepo Architecture
 
 ```
-jorh.net/
+jorh/
 ├── apps/
 │   ├── web/          # Astro — marketing site, landing page, tool pages (SEO)
 │   ├── dashboard/    # React + Vite — authenticated user dashboard

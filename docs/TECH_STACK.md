@@ -1,9 +1,9 @@
-# Jorh.net — Technical Architecture
+# Jorh — Technical Architecture
 
 ## Monorepo Structure
 
 ```
-jorh.net/
+jorh/
 ├── apps/
 │   ├── web/                     # Astro 4 — marketing, SEO, tool landing pages
 │   ├── dashboard/               # React 19 + Vite — authenticated dashboard SPA

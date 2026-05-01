@@ -1,4 +1,4 @@
-# Jorh.net — Monetization & Pricing Strategy
+# Jorh — Monetization & Pricing Strategy
 
 ## Pricing Philosophy
 
