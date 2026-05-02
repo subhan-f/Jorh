@@ -43,3 +43,5 @@ firestore-debug.log
 
 .claude/
 .husky/
+
+out.json
