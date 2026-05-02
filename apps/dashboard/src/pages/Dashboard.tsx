@@ -41,7 +41,7 @@ export default function DashboardPage() {
               Welcome back, {user?.displayName?.split(" ")[0] ?? "there"} 👋
             </h2>
             <p className="text-muted-foreground text-sm">
-              Here's what's happening with your links today.
+              Here&apos;s what&apos;s happening with your links today.
             </p>
           </div>
 

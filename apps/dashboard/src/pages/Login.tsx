@@ -73,7 +73,7 @@ export default function LoginPage() {
           </span>
           <h1 className="mt-2 text-xl font-semibold">Sign in to your account</h1>
           <p className="text-muted-foreground mt-1 text-sm">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link to="/register" className="text-primary underline underline-offset-4">
               Sign up free
             </Link>
