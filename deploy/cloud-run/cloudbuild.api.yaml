@@ -1,7 +1,6 @@
 steps:
   # Pull the previous image to use as a cache layer (allowed to fail on first build)
   - name: gcr.io/cloud-builders/docker
-    id: pull-cache
     entrypoint: bash
     args:
       - -c
@@ -11,8 +10,6 @@ steps:
         || true
 
   - name: gcr.io/cloud-builders/docker
-    id: build
-    waitFor: [pull-cache]
     args:
       - build
       - -f
@@ -25,18 +22,13 @@ steps:
       - us-central1-docker.pkg.dev/${_PROJECT_ID}/cloud-run/jorh-api:cache
       - .
 
-  # Push both the versioned tag and the cache tag in one shot
   - name: gcr.io/cloud-builders/docker
-    id: push
-    waitFor: [build]
     args:
       - push
       - --all-tags
       - us-central1-docker.pkg.dev/${_PROJECT_ID}/cloud-run/jorh-api
 
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk
-    id: deploy
-    waitFor: [push]
     entrypoint: gcloud
     args:
       - run
@@ -61,7 +53,6 @@ steps:
       - "10"
       - --project
       - ${_PROJECT_ID}
-      # Non-secret runtime environment variables
       - --set-env-vars
       - >-
         FIREBASE_PROJECT_ID=${_FIREBASE_PROJECT_ID},
@@ -70,9 +61,6 @@ steps:
         APP_URL=${_APP_URL},
         ADMIN_EMAILS=${_ADMIN_EMAILS},
         NODE_ENV=production
-      # Secrets from Secret Manager — create these before first deploy:
-      #   gcloud secrets create jorh-firebase-private-key --data-file=key.json
-      #   gcloud secrets create jorh-internal-api-secret --data-file=secret.txt
       - --set-secrets
       - >-
         FIREBASE_PRIVATE_KEY=projects/${_PROJECT_ID}/secrets/jorh-firebase-private-key/versions/latest,

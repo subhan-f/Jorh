@@ -1,7 +1,6 @@
 steps:
   # Pull the previous image to use as a cache layer (allowed to fail on first build)
   - name: gcr.io/cloud-builders/docker
-    id: pull-cache
     entrypoint: bash
     args:
       - -c
@@ -11,15 +10,12 @@ steps:
         || true
 
   - name: gcr.io/cloud-builders/docker
-    id: build
-    waitFor: [pull-cache]
     args:
       - build
       - -f
       - apps/web/Dockerfile
       - --cache-from
       - us-central1-docker.pkg.dev/${_PROJECT_ID}/cloud-run/jorh-web:cache
-      # Astro build-time environment variables
       - --build-arg
       - "PUBLIC_FIREBASE_API_KEY=${_PUBLIC_FIREBASE_API_KEY}"
       - --build-arg
@@ -44,18 +40,13 @@ steps:
       - us-central1-docker.pkg.dev/${_PROJECT_ID}/cloud-run/jorh-web:cache
       - .
 
-  # Push both the versioned tag and the cache tag in one shot
   - name: gcr.io/cloud-builders/docker
-    id: push
-    waitFor: [build]
     args:
       - push
       - --all-tags
       - us-central1-docker.pkg.dev/${_PROJECT_ID}/cloud-run/jorh-web
 
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk
-    id: deploy
-    waitFor: [push]
     entrypoint: gcloud
     args:
       - run
@@ -86,7 +77,6 @@ substitutions:
   _REGION: us-central1
   _SERVICE: jorh-web
   _TAG: latest
-  # Client-side Firebase config (public — safe to keep here)
   _PUBLIC_FIREBASE_API_KEY: "AIzaSyC6wAT24hANekwqZ-677OV9vxn7AmtZO1k"
   _PUBLIC_FIREBASE_AUTH_DOMAIN: "jorh-1.firebaseapp.com"
   _PUBLIC_FIREBASE_PROJECT_ID: "jorh-1"
