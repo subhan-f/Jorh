@@ -14,18 +14,21 @@
 ## Target Segments
 
 ### Primary: Solo Creators & Influencers
+
 - Instagram, TikTok, YouTube creators with 10K–1M followers
 - **Pain:** Juggling Linktree + Bitly + a QR generator + UTM builder
 - **Hook:** "Replace all your link tools with one. For free."
 - **Channel:** Instagram/TikTok organic, YouTube tutorials
 
 ### Secondary: Digital Marketers & Growth Teams
+
 - Marketing teams at SMBs, agencies, e-commerce brands
 - **Pain:** No unified analytics across all their links; scattered campaign tracking
 - **Hook:** "See every click, from every channel, in one dashboard."
 - **Channel:** LinkedIn content, Product Hunt, Twitter/X, SEO
 
 ### Tertiary: Developers & Indie Hackers
+
 - Developers who want a link tool API for their own products
 - **Pain:** Building their own shortener from scratch is annoying
 - **Hook:** "URL shortener API in 5 minutes. Generous free tier."
@@ -50,6 +53,7 @@ Each tool is a standalone SEO landing page. These pages are essentially free, re
 | `/tools/og-preview` | "open graph preview" | 8,100 |
 
 **Tactics:**
+
 - Astro-rendered static pages → near-perfect Core Web Vitals
 - Each tool page embeds a **working, functional tool** (not a screenshot)
 - Anonymous use → creates an account mid-session naturally
@@ -75,7 +79,7 @@ Each tool is a standalone SEO landing page. These pages are essentially free, re
 ### 4. YouTube (Tutorial Content)
 
 - "How to make a Linktree for free in 2025" (targets Linktree brand keyword)
-- "Best URL shortener for Instagram" 
+- "Best URL shortener for Instagram"
 - "How to create a WhatsApp link with pre-filled message"
 - Tutorials naturally rank for low-competition how-to keywords
 
@@ -109,12 +113,14 @@ Each tool is a standalone SEO landing page. These pages are essentially free, re
 ## Retention Strategy
 
 ### Onboarding Flow
+
 1. Sign up → auto-create first short link (from onboarding wizard)
 2. Prompt to create bio page (highest retention action)
 3. Email day 1: "Share your Jorh bio page"
 4. Email day 7: If no links created → "Here's what you can do with Jorh"
 
 ### Key Activation Events (correlate with retention)
+
 - ✅ First link shortened
 - ✅ First QR downloaded
 - ✅ Bio page published
@@ -124,6 +130,7 @@ Each tool is a standalone SEO landing page. These pages are essentially free, re
 Get users to 3+ activation events in the first 7 days = high retention probability.
 
 ### In-app Nudges
+
 - Free tier usage bar: "You've used 38/50 links. Upgrade for unlimited."
 - Feature discovery: "Did you know you can add a password to any link?"
 - Weekly email digest: "Your links got 142 clicks this week"
@@ -135,6 +142,7 @@ Get users to 3+ activation events in the first 7 days = high retention probabili
 ### Blog Posts (target these for organic traffic)
 
 **How-to articles:**
+
 - "How to create a WhatsApp link for your business"
 - "How to track clicks on your Instagram bio link"
 - "UTM parameters explained: the complete guide"
@@ -142,11 +150,13 @@ Get users to 3+ activation events in the first 7 days = high retention probabili
 - "Best link shorteners compared: Bitly vs Rebrandly vs Jorh"
 
 **Use-case articles:**
+
 - "10 ways creators use link-in-bio pages"
 - "How to use UTM tracking for influencer campaigns"
 - "QR codes for small businesses: a practical guide"
 
 **Technical articles (for dev audience):**
+
 - "How URL shorteners work (and how we built ours on Cloudflare Workers)"
 - "Building a link analytics system with Firestore and ClickHouse"
 
@@ -167,14 +177,14 @@ Get users to 3+ activation events in the first 7 days = high retention probabili
 
 ## Metrics to Track Weekly
 
-| Metric | Tool |
-|---|---|
-| Signups | PostHog + Firebase Auth |
-| Links created | Firestore |
-| Active users (DAU/MAU) | PostHog |
-| MRR | Stripe Dashboard |
-| Conversion: Free → Pro | Stripe |
-| Churn rate | Stripe |
-| Organic traffic | Google Search Console |
-| Keyword rankings | Ahrefs / Semrush |
-| NPS | in-app survey (Formbricks) |
+| Metric                 | Tool                       |
+| ---------------------- | -------------------------- |
+| Signups                | PostHog + Firebase Auth    |
+| Links created          | Firestore                  |
+| Active users (DAU/MAU) | PostHog                    |
+| MRR                    | Stripe Dashboard           |
+| Conversion: Free → Pro | Stripe                     |
+| Churn rate             | Stripe                     |
+| Organic traffic        | Google Search Console      |
+| Keyword rankings       | Ahrefs / Semrush           |
+| NPS                    | in-app survey (Formbricks) |
