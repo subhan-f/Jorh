@@ -1,6 +1,7 @@
 # Cloud Run Deployment (Monorepo)
 
 This directory contains Cloud Run deployment code for these services:
+
 - `jorh-api` from `apps/api`
 - `jorh-dashboard` from `apps/dashboard`
 - `jorh-web` from `apps/web`
@@ -41,6 +42,7 @@ Or from root package scripts:
 Set them on Cloud Run before traffic cutover.
 
 Recommended approach:
+
 - Store sensitive values in Secret Manager
 - Attach secrets to the Cloud Run service with `--set-secrets`
 - Set non-sensitive values with `--set-env-vars`

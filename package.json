@@ -30,8 +30,14 @@
     "pnpm": ">=9"
   },
   "lint-staged": {
-    "*.{ts,tsx}": ["prettier --write"],
-    "*.astro": ["prettier --write"],
-    "*.{json,md,css}": ["prettier --write"]
+    "*.{ts,tsx}": [
+      "prettier --write"
+    ],
+    "*.astro": [
+      "prettier --write"
+    ],
+    "*.{json,md,css}": [
+      "prettier --write"
+    ]
   }
 }
