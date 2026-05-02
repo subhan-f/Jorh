@@ -41,8 +41,8 @@ export default function LoginPage() {
   const handleGoogle = async () => {
     setGoogleLoading(true);
     try {
-      await signInWithGoogle();
-      navigate("/");
+      const result = await signInWithGoogle();
+      if (result) navigate("/");
     } catch (err) {
       const code = (err as { code?: string }).code ?? "";
       if (code === "auth/popup-closed-by-user" || code === "auth/cancelled-popup-request") return;

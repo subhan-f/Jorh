@@ -50,6 +50,12 @@ export const signUpWithEmail = (email: string, password: string) =>
 
 // Pass browserPopupRedirectResolver explicitly so initializeAuth stays clean.
 export const signInWithGoogle = async () => {
+  // Redirect flow is more robust in browsers that restrict popup storage.
+  // It avoids the common popup handler error: "Unable to save initial state".
+  await signInWithRedirect(auth(), googleProvider, browserPopupRedirectResolver);
+  return null;
+
+  /*
   try {
     return await signInWithPopup(auth(), googleProvider, browserPopupRedirectResolver);
   } catch (error) {
@@ -63,6 +69,7 @@ export const signInWithGoogle = async () => {
     }
     throw error;
   }
+  */
 };
 
 export const signOut = () => _signOut(auth());
