@@ -3,12 +3,15 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signInWithRedirect,
+  signInWithPopup,
   GoogleAuthProvider,
   signOut as _signOut,
   onAuthStateChanged,
   sendPasswordResetEmail,
   updateProfile,
+  type AuthError,
   type Auth,
+  type UserCredential,
   type User,
 } from "firebase/auth";
 import { getApp } from "./app.js";
@@ -30,11 +33,23 @@ export const signInWithEmail = (email: string, password: string) =>
 export const signUpWithEmail = (email: string, password: string) =>
   createUserWithEmailAndPassword(auth(), email, password);
 
-export const signInWithGoogle = async () => {
-  // Redirect flow is more robust in browsers that restrict popup storage.
-  // Use the default redirect resolver to avoid resolver-specific storage quirks.
-  await signInWithRedirect(auth(), googleProvider);
-  return null;
+function shouldFallbackToRedirect(error: unknown): boolean {
+  const authError = error as Partial<AuthError> & { message?: string };
+  const code = authError.code ?? "";
+
+  if (code === "auth/popup-blocked") return true;
+  if (code === "auth/cancelled-popup-request") return true;
+  return false;
+}
+
+export const signInWithGoogle = async (): Promise<UserCredential | null> => {
+  try {
+    return await signInWithPopup(auth(), googleProvider);
+  } catch (error) {
+    if (!shouldFallbackToRedirect(error)) throw error;
+    await signInWithRedirect(auth(), googleProvider);
+    return null;
+  }
 };
 
 export const signOut = () => _signOut(auth());

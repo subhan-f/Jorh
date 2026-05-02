@@ -6,6 +6,9 @@
     "build": "turbo build",
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
+    "deploy:cloud-run:api": "bash deploy/cloud-run/deploy.sh api",
+    "deploy:cloud-run:dashboard": "bash deploy/cloud-run/deploy.sh dashboard",
+    "deploy:cloud-run:web": "bash deploy/cloud-run/deploy.sh web",
     "format": "prettier --write \"**/*.{ts,tsx,astro,md,json,css}\" --ignore-path .prettierignore",
     "format:check": "prettier --check \"**/*.{ts,tsx,astro,md,json,css}\" --ignore-path .prettierignore",
     "prepare": "husky"

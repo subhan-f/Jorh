@@ -36,8 +36,10 @@ app.route("/tools", toolRoutes);
 app.route("/billing", billingRoutes);
 
 app.onError(errorMiddleware);
-app.notFound((c) => c.json({ data: null, error: { code: "NOT_FOUND", message: "Route not found" } }, 404));
+app.notFound((c) =>
+  c.json({ data: null, error: { code: "NOT_FOUND", message: "Route not found" } }, 404)
+);
 
 serve({ fetch: app.fetch, port: env.PORT }, (info) => {
-  console.log(`🚀 API running at http://localhost:${info.port}`);
+  process.stdout.write(`🚀 API running at http://localhost:${info.port}\n`);
 });

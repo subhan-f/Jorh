@@ -1,0 +1,41 @@
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -f
+      - apps/api/Dockerfile
+      - -t
+      - us-central1-docker.pkg.dev/${_PROJECT_ID}/cloud-run/jorh-api:${_TAG}
+      - .
+
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - us-central1-docker.pkg.dev/${_PROJECT_ID}/cloud-run/jorh-api:${_TAG}
+
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - ${_SERVICE}
+      - --image
+      - us-central1-docker.pkg.dev/${_PROJECT_ID}/cloud-run/jorh-api:${_TAG}
+      - --region
+      - ${_REGION}
+      - --platform
+      - managed
+      - --allow-unauthenticated
+      - --port
+      - "8080"
+      - --project
+      - ${_PROJECT_ID}
+
+substitutions:
+  _PROJECT_ID: ""
+  _REGION: us-central1
+  _SERVICE: jorh-api
+  _TAG: latest
+
+options:
+  logging: CLOUD_LOGGING_ONLY
