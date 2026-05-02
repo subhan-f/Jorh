@@ -44,7 +44,7 @@ export function Sidebar() {
   const initials = user?.displayName
     ? user.displayName
         .split(" ")
-        .map((n) => n[0])
+        .map((n: any) => n[0])
         .join("")
         .slice(0, 2)
         .toUpperCase()

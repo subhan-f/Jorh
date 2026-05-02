@@ -1,19 +1,42 @@
 steps:
+  # Pull the previous image to use as a cache layer (allowed to fail on first build)
   - name: gcr.io/cloud-builders/docker
+    id: pull-cache
+    entrypoint: bash
+    args:
+      - -c
+      - >-
+        docker pull
+        us-central1-docker.pkg.dev/${_PROJECT_ID}/cloud-run/jorh-api:cache
+        || true
+
+  - name: gcr.io/cloud-builders/docker
+    id: build
+    waitFor: [pull-cache]
     args:
       - build
       - -f
       - apps/api/Dockerfile
+      - --cache-from
+      - us-central1-docker.pkg.dev/${_PROJECT_ID}/cloud-run/jorh-api:cache
       - -t
       - us-central1-docker.pkg.dev/${_PROJECT_ID}/cloud-run/jorh-api:${_TAG}
+      - -t
+      - us-central1-docker.pkg.dev/${_PROJECT_ID}/cloud-run/jorh-api:cache
       - .
 
+  # Push both the versioned tag and the cache tag in one shot
   - name: gcr.io/cloud-builders/docker
+    id: push
+    waitFor: [build]
     args:
       - push
-      - us-central1-docker.pkg.dev/${_PROJECT_ID}/cloud-run/jorh-api:${_TAG}
+      - --all-tags
+      - us-central1-docker.pkg.dev/${_PROJECT_ID}/cloud-run/jorh-api
 
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    id: deploy
+    waitFor: [push]
     entrypoint: gcloud
     args:
       - run
@@ -28,30 +51,47 @@ steps:
       - --allow-unauthenticated
       - --port
       - "8080"
+      - --memory
+      - "512Mi"
+      - --cpu
+      - "1"
+      - --min-instances
+      - "0"
+      - --max-instances
+      - "10"
       - --project
       - ${_PROJECT_ID}
-      # Non‑secret environment variables
+      # Non-secret runtime environment variables
       - --set-env-vars
-      - "FIREBASE_PROJECT_ID=${_FIREBASE_PROJECT_ID},FIREBASE_CLIENT_EMAIL=${_FIREBASE_CLIENT_EMAIL},WEB_URL=${_WEB_URL},APP_URL=${_APP_URL},ADMIN_EMAILS=${_ADMIN_EMAILS},NODE_ENV=production"
-      # Secrets pulled from Secret Manager
+      - >-
+        FIREBASE_PROJECT_ID=${_FIREBASE_PROJECT_ID},
+        FIREBASE_CLIENT_EMAIL=${_FIREBASE_CLIENT_EMAIL},
+        WEB_URL=${_WEB_URL},
+        APP_URL=${_APP_URL},
+        ADMIN_EMAILS=${_ADMIN_EMAILS},
+        NODE_ENV=production
+      # Secrets from Secret Manager — create these before first deploy:
+      #   gcloud secrets create jorh-firebase-private-key --data-file=key.json
+      #   gcloud secrets create jorh-internal-api-secret --data-file=secret.txt
       - --set-secrets
-      - "FIREBASE_PRIVATE_KEY=jorh-firebase-private-key:latest"
-      # Uncomment and add more secrets as needed:
-      # - "STRIPE_SECRET_KEY=projects/${_PROJECT_ID}/secrets/stripe-secret-key/versions/latest"
-      # - "RESEND_API_KEY=projects/${_PROJECT_ID}/secrets/resend-api-key/versions/latest"
-      # - "INTERNAL_API_SECRET=projects/${_PROJECT_ID}/secrets/internal-api-secret/versions/latest"
+      - >-
+        FIREBASE_PRIVATE_KEY=projects/${_PROJECT_ID}/secrets/jorh-firebase-private-key/versions/latest,
+        INTERNAL_API_SECRET=projects/${_PROJECT_ID}/secrets/jorh-internal-api-secret/versions/latest
 
 substitutions:
   _PROJECT_ID: "jorh-1"
   _REGION: us-central1
   _SERVICE: jorh-api
   _TAG: latest
-  # Default values for non‑secret environment variables
   _FIREBASE_PROJECT_ID: "jorh-1"
   _FIREBASE_CLIENT_EMAIL: "firebase-adminsdk-fbsvc@jorh-1.iam.gserviceaccount.com"
   _WEB_URL: "https://jorh.net"
-  _APP_URL: "https://dashboard.jorh.net"
-  _ADMIN_EMAILS: "info@subhanfarrakh.com" # Change to your admin email(s)
+  _APP_URL: "https://app.jorh.net"
+  _ADMIN_EMAILS: "info@subhanfarrakh.com"
 
 options:
+  machineType: E2_HIGHCPU_8
   logging: CLOUD_LOGGING_ONLY
+  diskSizeGb: 100
+
+timeout: 1200s
