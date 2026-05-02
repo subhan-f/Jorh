@@ -35,7 +35,7 @@ steps:
       - "FIREBASE_PROJECT_ID=${_FIREBASE_PROJECT_ID},FIREBASE_CLIENT_EMAIL=${_FIREBASE_CLIENT_EMAIL},WEB_URL=${_WEB_URL},APP_URL=${_APP_URL},ADMIN_EMAILS=${_ADMIN_EMAILS},NODE_ENV=production"
       # Secrets pulled from Secret Manager
       - --set-secrets
-      - "FIREBASE_PRIVATE_KEY=projects/${_PROJECT_ID}/secrets/jorh-firebase-private-key/versions/latest"
+      - "FIREBASE_PRIVATE_KEY=jorh-firebase-private-key:latest"
       # Uncomment and add more secrets as needed:
       # - "STRIPE_SECRET_KEY=projects/${_PROJECT_ID}/secrets/stripe-secret-key/versions/latest"
       # - "RESEND_API_KEY=projects/${_PROJECT_ID}/secrets/resend-api-key/versions/latest"
