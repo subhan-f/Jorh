@@ -4,6 +4,24 @@ steps:
       - build
       - -f
       - apps/web/Dockerfile
+      - --build-arg
+      - "PUBLIC_FIREBASE_API_KEY=${_PUBLIC_FIREBASE_API_KEY}"
+      - --build-arg
+      - "PUBLIC_FIREBASE_AUTH_DOMAIN=${_PUBLIC_FIREBASE_AUTH_DOMAIN}"
+      - --build-arg
+      - "PUBLIC_FIREBASE_PROJECT_ID=${_PUBLIC_FIREBASE_PROJECT_ID}"
+      - --build-arg
+      - "PUBLIC_FIREBASE_STORAGE_BUCKET=${_PUBLIC_FIREBASE_STORAGE_BUCKET}"
+      - --build-arg
+      - "PUBLIC_FIREBASE_MESSAGING_SENDER_ID=${_PUBLIC_FIREBASE_MESSAGING_SENDER_ID}"
+      - --build-arg
+      - "PUBLIC_FIREBASE_APP_ID=${_PUBLIC_FIREBASE_APP_ID}"
+      - --build-arg
+      - "PUBLIC_API_URL=${_PUBLIC_API_URL}"
+      - --build-arg
+      - "PUBLIC_POSTHOG_KEY=${_PUBLIC_POSTHOG_KEY}"
+      - --build-arg
+      - "PUBLIC_POSTHOG_HOST=${_PUBLIC_POSTHOG_HOST}"
       - -t
       - us-central1-docker.pkg.dev/${_PROJECT_ID}/cloud-run/jorh-web:${_TAG}
       - .
@@ -36,6 +54,15 @@ substitutions:
   _REGION: us-central1
   _SERVICE: jorh-web
   _TAG: latest
+  _PUBLIC_FIREBASE_API_KEY: "AIzaSyC6wAT24hANekwqZ-677OV9vxn7AmtZO1k" # Replace with your actual key
+  _PUBLIC_FIREBASE_AUTH_DOMAIN: "jorh-1.firebaseapp.com"
+  _PUBLIC_FIREBASE_PROJECT_ID: "jorh-1"
+  _PUBLIC_FIREBASE_STORAGE_BUCKET: "jorh-1.appspot.com"
+  _PUBLIC_FIREBASE_MESSAGING_SENDER_ID: "599388754417"
+  _PUBLIC_FIREBASE_APP_ID: "1:599388754417:web:26d81b39960eed6700f450"
+  _PUBLIC_API_URL: "" # Astro might use /api or a full URL
+  _PUBLIC_POSTHOG_KEY: ""
+  _PUBLIC_POSTHOG_HOST: ""
 
 options:
   logging: CLOUD_LOGGING_ONLY

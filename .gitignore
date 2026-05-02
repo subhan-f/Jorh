@@ -45,3 +45,5 @@ firestore-debug.log
 .husky/
 
 out.json
+
+tmp/

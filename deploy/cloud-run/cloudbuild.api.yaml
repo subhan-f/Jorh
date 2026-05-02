@@ -30,12 +30,28 @@ steps:
       - "8080"
       - --project
       - ${_PROJECT_ID}
+      # Non‑secret environment variables
+      - --set-env-vars
+      - "FIREBASE_PROJECT_ID=${_FIREBASE_PROJECT_ID},FIREBASE_CLIENT_EMAIL=${_FIREBASE_CLIENT_EMAIL},WEB_URL=${_WEB_URL},APP_URL=${_APP_URL},ADMIN_EMAILS=${_ADMIN_EMAILS},NODE_ENV=production"
+      # Secrets pulled from Secret Manager
+      - --set-secrets
+      - "FIREBASE_PRIVATE_KEY=projects/${_PROJECT_ID}/secrets/jorh-firebase-private-key/versions/latest"
+      # Uncomment and add more secrets as needed:
+      # - "STRIPE_SECRET_KEY=projects/${_PROJECT_ID}/secrets/stripe-secret-key/versions/latest"
+      # - "RESEND_API_KEY=projects/${_PROJECT_ID}/secrets/resend-api-key/versions/latest"
+      # - "INTERNAL_API_SECRET=projects/${_PROJECT_ID}/secrets/internal-api-secret/versions/latest"
 
 substitutions:
   _PROJECT_ID: "jorh-1"
   _REGION: us-central1
   _SERVICE: jorh-api
   _TAG: latest
+  # Default values for non‑secret environment variables
+  _FIREBASE_PROJECT_ID: "jorh-1"
+  _FIREBASE_CLIENT_EMAIL: "firebase-adminsdk-fbsvc@jorh-1.iam.gserviceaccount.com"
+  _WEB_URL: "https://jorh.net"
+  _APP_URL: "https://dashboard.jorh.net"
+  _ADMIN_EMAILS: "info@subhanfarrakh.com" # Change to your admin email(s)
 
 options:
   logging: CLOUD_LOGGING_ONLY

@@ -4,6 +4,28 @@ steps:
       - build
       - -f
       - apps/dashboard/Dockerfile
+      # Pass Vite build-time environment variables as build arguments
+      - --build-arg
+      - "VITE_FIREBASE_API_KEY=${_VITE_FIREBASE_API_KEY}"
+      - --build-arg
+      - "VITE_FIREBASE_AUTH_DOMAIN=${_VITE_FIREBASE_AUTH_DOMAIN}"
+      - --build-arg
+      - "VITE_FIREBASE_PROJECT_ID=${_VITE_FIREBASE_PROJECT_ID}"
+      - --build-arg
+      - "VITE_FIREBASE_STORAGE_BUCKET=${_VITE_FIREBASE_STORAGE_BUCKET}"
+      - --build-arg
+      - "VITE_FIREBASE_MESSAGING_SENDER_ID=${_VITE_FIREBASE_MESSAGING_SENDER_ID}"
+      - --build-arg
+      - "VITE_FIREBASE_APP_ID=${_VITE_FIREBASE_APP_ID}"
+      - --build-arg
+      - "VITE_API_URL=${_VITE_API_URL}"
+      - --build-arg
+      - "VITE_REDIRECT_BASE=${_VITE_REDIRECT_BASE}"
+      # Additional optional analytics / monitoring keys
+      - --build-arg
+      - "VITE_POSTHOG_KEY=${_VITE_POSTHOG_KEY}"
+      - --build-arg
+      - "VITE_POSTHOG_HOST=${_VITE_POSTHOG_HOST}"
       - -t
       - us-central1-docker.pkg.dev/${_PROJECT_ID}/cloud-run/jorh-dashboard:${_TAG}
       - .
@@ -36,6 +58,18 @@ substitutions:
   _REGION: us-central1
   _SERVICE: jorh-dashboard
   _TAG: latest
+  # Client‑side Firebase config (public – safe to keep here)
+  _VITE_FIREBASE_API_KEY: "AIzaSyC6wAT24hANekwqZ-677OV9vxn7AmtZO1k" # Replace with your actual key
+  _VITE_FIREBASE_AUTH_DOMAIN: "jorh-1.firebaseapp.com"
+  _VITE_FIREBASE_PROJECT_ID: "jorh-1"
+  _VITE_FIREBASE_STORAGE_BUCKET: "jorh-1.appspot.com"
+  _VITE_FIREBASE_MESSAGING_SENDER_ID: "599388754417"
+  _VITE_FIREBASE_APP_ID: "1:599388754417:web:26d81b39960eed6700f450"
+  _VITE_FIREBASE_MEASUREMENT_ID: "G-ZY059QLB4K"
+  _VITE_API_URL: "/api" # (Dashboard uses proxy, but set if needed)
+  _VITE_REDIRECT_BASE: "https://jorh.net"
+  _VITE_POSTHOG_KEY: "" # Optional: phc_...
+  _VITE_POSTHOG_HOST: "" # Optional: https://app.posthog.com
 
 options:
   logging: CLOUD_LOGGING_ONLY
