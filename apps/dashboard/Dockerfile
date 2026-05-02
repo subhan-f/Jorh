@@ -16,7 +16,7 @@ COPY packages/config ./packages/config
 
 RUN pnpm install --frozen-lockfile
 
-# Vite replaces import.meta.env.VITE_* at build time — these must be set before `vite build`
+# Vite replaces import.meta.env.VITE_* at build time — must be set before `vite build`
 ARG VITE_FIREBASE_API_KEY
 ARG VITE_FIREBASE_AUTH_DOMAIN
 ARG VITE_FIREBASE_PROJECT_ID
@@ -41,9 +41,15 @@ ENV VITE_FIREBASE_API_KEY=$VITE_FIREBASE_API_KEY \
     VITE_POSTHOG_KEY=$VITE_POSTHOG_KEY \
     VITE_POSTHOG_HOST=$VITE_POSTHOG_HOST
 
-# Copy source after install to preserve the cached install layer
-COPY apps/dashboard ./apps/dashboard
+# Copy shared package sources before the app — if only the app changes, these layers stay cached
 COPY packages ./packages
+
+# Compile workspace packages so Vite finds dist/ when it resolves the "import" condition
+RUN pnpm --filter @jorh/types build
+RUN pnpm --filter @jorh/utils build
+
+# Copy app source last (most likely to change between commits)
+COPY apps/dashboard ./apps/dashboard
 
 RUN pnpm --filter @jorh/dashboard build
 

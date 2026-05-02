@@ -16,7 +16,7 @@ COPY packages/config ./packages/config
 
 RUN pnpm install --frozen-lockfile
 
-# Astro replaces import.meta.env.PUBLIC_* at build time — these must be set before `astro build`
+# Astro replaces import.meta.env.PUBLIC_* at build time — must be set before `astro build`
 ARG PUBLIC_FIREBASE_API_KEY
 ARG PUBLIC_FIREBASE_AUTH_DOMAIN
 ARG PUBLIC_FIREBASE_PROJECT_ID
@@ -37,9 +37,15 @@ ENV PUBLIC_FIREBASE_API_KEY=$PUBLIC_FIREBASE_API_KEY \
     PUBLIC_POSTHOG_KEY=$PUBLIC_POSTHOG_KEY \
     PUBLIC_POSTHOG_HOST=$PUBLIC_POSTHOG_HOST
 
-# Copy source after install to preserve the cached install layer
-COPY apps/web ./apps/web
+# Copy shared package sources before the app — if only the app changes, these layers stay cached
 COPY packages ./packages
+
+# Compile workspace packages so Astro/Vite finds dist/ when it resolves the "import" condition
+RUN pnpm --filter @jorh/types build
+RUN pnpm --filter @jorh/utils build
+
+# Copy app source last (most likely to change between commits)
+COPY apps/web ./apps/web
 
 RUN pnpm --filter @jorh/web build
 
