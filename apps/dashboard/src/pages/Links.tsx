@@ -42,6 +42,7 @@ export default function LinksPage() {
       toast.success("Link deleted");
       qc.invalidateQueries({ queryKey: ["links"] });
     },
+    onError: () => toast.error("Failed to delete link"),
   });
 
   const handleCreate = () => {
@@ -94,8 +95,11 @@ export default function LinksPage() {
               <Spinner />
             </div>
           ) : !data?.length ? (
-            <div className="py-16 text-center">
-              <p className="text-muted-foreground">No links yet. Create your first one above.</p>
+            <div className="rounded-2xl border border-dashed border-border bg-muted/30 px-6 py-16 text-center">
+              <p className="text-sm font-medium">No links yet</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Paste a URL above and hit Create to shorten your first link.
+              </p>
             </div>
           ) : (
             <div className="space-y-2">

@@ -4,10 +4,11 @@ import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
-  site: "https://jorh.net",
+  site: "http://localhost:3000",
   integrations: [react(), sitemap()],
   vite: {
     plugins: [tailwindcss()],
+    envDir: "../../",
   },
   output: "static",
 });

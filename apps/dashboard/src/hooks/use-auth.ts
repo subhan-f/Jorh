@@ -14,9 +14,13 @@ export function useAuthInit() {
       if (firebaseUser) {
         try {
           const res = await api.post<User>("/auth/verify", {});
-          if (res.data) setUser(res.data);
+          if (res.data && !res.error) {
+            setUser(res.data);
+          } else {
+            setUser(null);
+          }
         } catch {
-          // non-blocking
+          setUser(null);
         }
       } else {
         setUser(null);

@@ -1,10 +1,15 @@
 import { z } from "zod";
+import dotenv from "dotenv";
+import path from "path";
+
+dotenv.config({ path: path.resolve("../../.env") });
 
 const EnvSchema = z.object({
   PORT: z.coerce.number().default(3002),
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   WEB_URL: z.string().url().default("http://localhost:3000"),
   APP_URL: z.string().url().default("http://localhost:3001"),
+  ADMIN_EMAILS: z.string().default(""),
   // Firebase Admin
   FIREBASE_PROJECT_ID: z.string(),
   FIREBASE_PRIVATE_KEY: z.string(),

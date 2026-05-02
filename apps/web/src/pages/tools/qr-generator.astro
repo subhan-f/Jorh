@@ -75,15 +75,29 @@ import Footer from "../../components/Footer.astro";
   const img = document.getElementById("qr-image") as HTMLImageElement;
   const downloadLink = document.getElementById("download-png") as HTMLAnchorElement;
 
+  const errorEl = document.createElement("p");
+  errorEl.className = "hidden text-sm text-destructive text-center";
+  btn?.parentElement?.appendChild(errorEl);
+
   btn?.addEventListener("click", async () => {
     const url = urlInput.value.trim();
     if (!url) return;
+
+    try {
+      new URL(url);
+    } catch {
+      errorEl.textContent = "⚠️ Please enter a valid URL";
+      errorEl.classList.remove("hidden");
+      return;
+    }
+    errorEl.classList.add("hidden");
 
     btn.textContent = "Generating…";
     (btn as HTMLButtonElement).disabled = true;
 
     try {
-      const res = await fetch(`${import.meta.env.PUBLIC_API_URL ?? "http://localhost:3002"}/qr/generate`, {
+      const apiBase = import.meta.env.PUBLIC_API_URL ?? "http://localhost:3002";
+      const res = await fetch(`${apiBase}/qr/generate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -95,10 +109,17 @@ import Footer from "../../components/Footer.astro";
         }),
       });
 
-      const { data } = await res.json();
-      img.src = data.data;
-      downloadLink.href = data.data;
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.json() as { data?: { data: string } };
+      const dataUrl = json.data?.data;
+      if (!dataUrl) throw new Error("No data in response");
+
+      img.src = dataUrl;
+      downloadLink.href = dataUrl;
       preview?.classList.remove("hidden");
+    } catch {
+      errorEl.textContent = "Failed to generate QR code. Please try again.";
+      errorEl.classList.remove("hidden");
     } finally {
       btn.textContent = "Generate QR Code";
       (btn as HTMLButtonElement).disabled = false;

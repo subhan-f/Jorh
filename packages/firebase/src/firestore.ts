@@ -20,7 +20,12 @@ import {
 } from "firebase/firestore";
 import { getApp } from "./app.js";
 
-export const db = getFirestore(getApp());
+let _db: ReturnType<typeof getFirestore> | null = null;
+
+export function getDb() {
+  if (!_db) _db = getFirestore(getApp());
+  return _db;
+}
 
 export const Collections = {
   USERS: "users",

@@ -3,10 +3,5 @@
   "version": "0.0.1",
   "private": true,
   "license": "MIT",
-  "exports": {
-    "./base": "./base.json",
-    "./react": "./react.json",
-    "./astro": "./astro.json",
-    "./node": "./node.json"
-  }
+  "files": ["base.json", "react.json", "astro.json", "node.json"]
 }

@@ -22,12 +22,16 @@ async function cfKvRequest(method: string, key: string, body?: unknown): Promise
   });
 }
 
+function kvConfigured(): boolean {
+  return !!(env.CLOUDFLARE_API_TOKEN && env.CLOUDFLARE_ACCOUNT_ID && env.CLOUDFLARE_KV_NAMESPACE_ID);
+}
+
 export async function kvSet(shortCode: string, data: KvLinkData): Promise<void> {
-  if (!env.CLOUDFLARE_API_TOKEN) return;
+  if (!kvConfigured()) return;
   await cfKvRequest("PUT", shortCode, data);
 }
 
 export async function kvDelete(shortCode: string): Promise<void> {
-  if (!env.CLOUDFLARE_API_TOKEN) return;
+  if (!kvConfigured()) return;
   await cfKvRequest("DELETE", shortCode);
 }

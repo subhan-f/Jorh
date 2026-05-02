@@ -11,6 +11,22 @@ export const linkRoutes = new Hono<HonoEnv>();
 
 linkRoutes.use("*", requireAuth);
 
+linkRoutes.get(
+  "/check-slug",
+  zValidator("query", z.object({ slug: z.string().min(3).max(30) })),
+  async (c) => {
+    const { slug } = c.req.valid("query");
+    const { adminDb, Collections } = await import("../lib/firebase.js");
+    const snap = await adminDb
+      .collection(Collections.LINKS)
+      .where("shortCode", "==", slug)
+      .where("isDeleted", "==", false)
+      .limit(1)
+      .get();
+    return c.json(ok({ available: snap.empty }));
+  }
+);
+
 linkRoutes.get("/", async (c) => {
   const userId = c.get("userId");
   const { limit, cursor } = c.req.query();
@@ -47,19 +63,3 @@ linkRoutes.delete("/:id", async (c) => {
   await deleteLink(c.req.param("id"), c.get("userId"));
   return c.json(ok(null));
 });
-
-linkRoutes.get(
-  "/check-slug",
-  zValidator("query", z.object({ slug: z.string().min(3).max(30) })),
-  async (c) => {
-    const { slug } = c.req.valid("query");
-    const { adminDb, Collections } = await import("../lib/firebase.js");
-    const snap = await adminDb
-      .collection(Collections.LINKS)
-      .where("shortCode", "==", slug)
-      .where("isDeleted", "==", false)
-      .limit(1)
-      .get();
-    return c.json(ok({ available: snap.empty }));
-  }
-);

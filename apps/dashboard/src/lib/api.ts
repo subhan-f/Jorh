@@ -5,7 +5,8 @@ const BASE_URL = import.meta.env.VITE_API_URL ?? "/api";
 
 async function request<T>(
   path: string,
-  init: RequestInit = {}
+  init: RequestInit = {},
+  retryWithFreshToken = true
 ): Promise<ApiResponse<T>> {
   const token = await getIdToken();
   const headers: Record<string, string> = {
@@ -15,6 +16,12 @@ async function request<T>(
   if (token) headers["Authorization"] = `Bearer ${token}`;
 
   const res = await fetch(`${BASE_URL}${path}`, { ...init, headers });
+  if (res.status === 401 && retryWithFreshToken) {
+    const freshToken = await getIdToken(true);
+    if (freshToken) {
+      return request<T>(path, init, false);
+    }
+  }
   return res.json() as Promise<ApiResponse<T>>;
 }
 

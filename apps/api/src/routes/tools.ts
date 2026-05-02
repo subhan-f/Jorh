@@ -2,9 +2,56 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 import { ok } from "@jorh/types";
-import { buildWhatsAppLink, buildTweetIntent, buildLinkedInShare, addUtmParams } from "@jorh/utils";
+import { buildWhatsAppLink, buildTweetIntent, buildLinkedInShare, addUtmParams, generateShortCode } from "@jorh/utils";
+import { adminDb, Collections } from "../lib/firebase.js";
+import { kvSet } from "../lib/kv.js";
 
 export const toolRoutes = new Hono();
+
+// Public guest URL shortener — creates anonymous links (no auth required)
+toolRoutes.post(
+  "/shorten",
+  zValidator("json", z.object({ url: z.string().url("Must be a valid URL") })),
+  async (c) => {
+    const { url } = c.req.valid("json");
+    const shortCode = generateShortCode();
+
+    const existing = await adminDb
+      .collection(Collections.LINKS)
+      .where("shortCode", "==", shortCode)
+      .limit(1)
+      .get();
+
+    const finalCode = existing.empty ? shortCode : generateShortCode();
+    const now = new Date();
+
+    const link = {
+      ownerId: "anonymous",
+      originalUrl: url,
+      shortCode: finalCode,
+      tags: [],
+      type: "short" as const,
+      clickCount: 0,
+      isActive: true,
+      isDeleted: false,
+      domain: "jorh.net",
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    const ref = adminDb.collection(Collections.LINKS).doc();
+    await ref.set(link);
+    await kvSet(finalCode, {
+      id: ref.id,
+      originalUrl: url,
+      isActive: true,
+      clickCount: 0,
+    });
+
+    const shortUrl = `https://jorh.net/${finalCode}`;
+    return c.json(ok({ shortUrl, shortCode: finalCode }), 201);
+  }
+);
 
 toolRoutes.post(
   "/whatsapp",

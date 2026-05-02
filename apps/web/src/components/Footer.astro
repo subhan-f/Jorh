@@ -20,16 +20,18 @@ const links = {
 };
 ---
 
-<footer class="border-t border-border bg-muted/30">
+<footer class="border-border bg-muted/30 border-t">
   <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6">
     <div class="grid grid-cols-2 gap-8 md:grid-cols-4">
       <div class="col-span-2 md:col-span-1">
         <a href="/" class="text-xl font-bold">
-          <span class="bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
+          <span
+            class="bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent"
+          >
             Jorh
           </span>
         </a>
-        <p class="mt-2 max-w-xs text-sm text-muted-foreground">
+        <p class="text-muted-foreground mt-2 max-w-xs text-sm">
           Every link, beautifully managed. The all-in-one link intelligence platform.
         </p>
       </div>
@@ -43,7 +45,7 @@ const links = {
                 <li>
                   <a
                     href={item.href}
-                    class="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                    class="text-muted-foreground hover:text-foreground text-sm transition-colors"
                   >
                     {item.label}
                   </a>
@@ -55,8 +57,11 @@ const links = {
       }
     </div>
 
-    <div class="mt-12 border-t border-border pt-6 text-center text-xs text-muted-foreground">
-      © {year} Jorh. All rights reserved. Built with ♥
+    <div class="border-border text-muted-foreground mt-12 border-t pt-6 text-center text-xs">
+      © {year} Jorh. All rights reserved. Built with ♥ by <a
+        style="color: blue; text-decoration: underline;"
+        href="https://subhanfarrakh.com">Subhan F.</a
+      >
     </div>
   </div>
 </footer>

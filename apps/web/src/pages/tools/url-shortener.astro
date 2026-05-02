@@ -94,22 +94,32 @@ import Footer from "../../components/Footer.astro";
     (btn as HTMLButtonElement).disabled = true;
 
     try {
-      const res = await fetch(`${import.meta.env.PUBLIC_API_URL ?? "http://localhost:3002"}/tools/shorten`, {
+      const apiBase = import.meta.env.PUBLIC_API_URL ?? "http://localhost:3002";
+      const res = await fetch(`${apiBase}/tools/shorten`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url }),
       });
 
-      if (!res.ok) throw new Error("Failed");
-      const { data } = await res.json();
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.json() as { data?: { shortUrl: string } };
+      const shortUrl = json.data?.shortUrl;
+      if (!shortUrl) throw new Error("No shortUrl in response");
 
+      const escaped = shortUrl.replace(/'/g, "&#39;");
       result.innerHTML = `
-        Short link created: <a href="${data.shortUrl}" target="_blank" class="text-primary underline">${data.shortUrl}</a>
-        — <button onclick="navigator.clipboard.writeText('${data.shortUrl}')" class="text-primary underline">Copy</button>
+        Short link: <a href="${shortUrl}" target="_blank" rel="noopener noreferrer" class="text-primary underline">${shortUrl}</a>
+        &nbsp;— <button id="copy-short-url" data-url="${escaped}" class="text-primary underline">Copy</button>
       `;
       result.className = "text-sm text-foreground";
+      document.getElementById("copy-short-url")?.addEventListener("click", (e) => {
+        const target = e.currentTarget as HTMLButtonElement;
+        navigator.clipboard.writeText(target.dataset["url"] ?? "");
+        target.textContent = "Copied!";
+        setTimeout(() => { target.textContent = "Copy"; }, 2000);
+      });
     } catch {
-      result.textContent = "Sign in to create short links and access analytics.";
+      result.textContent = "Could not create short link. Sign in for full access.";
       result.className = "text-sm text-muted-foreground";
     } finally {
       result.classList.remove("hidden");

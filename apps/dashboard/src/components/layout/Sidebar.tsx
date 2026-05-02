@@ -7,33 +7,58 @@ import {
   BarChart2,
   Settings,
   ChevronLeft,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@jorh/ui";
 import { useUiStore } from "@/store/ui.store";
 import { useAuthStore } from "@/store/auth.store";
-
-const navItems = [
-  { href: "/", icon: LayoutDashboard, label: "Dashboard" },
-  { href: "/links", icon: Link2, label: "Links" },
-  { href: "/tools/qr", icon: QrCode, label: "QR Codes" },
-  { href: "/tools/whatsapp", icon: MessageCircle, label: "WhatsApp" },
-  { href: "/analytics", icon: BarChart2, label: "Analytics" },
-  { href: "/settings", icon: Settings, label: "Settings" },
-];
+import { signOut } from "@jorh/firebase/auth";
+import { useNavigate } from "react-router-dom";
+import { getRoleDashboardPath, withRolePath } from "@/lib/routing";
 
 export function Sidebar() {
   const { pathname } = useLocation();
   const { sidebarOpen, toggleSidebar } = useUiStore();
   const { user } = useAuthStore();
+  const navigate = useNavigate();
+  const role = user?.role ?? "client";
+
+  const navItems = [
+    {
+      href: getRoleDashboardPath(role),
+      icon: LayoutDashboard,
+      label: role === "admin" ? "Admin Dashboard" : "Client Dashboard",
+    },
+    { href: withRolePath(role, "/links"), icon: Link2, label: "Links" },
+    { href: withRolePath(role, "/tools/qr"), icon: QrCode, label: "QR Codes" },
+    { href: withRolePath(role, "/tools/whatsapp"), icon: MessageCircle, label: "WhatsApp" },
+    { href: withRolePath(role, "/analytics"), icon: BarChart2, label: "Analytics" },
+    { href: withRolePath(role, "/settings"), icon: Settings, label: "Settings" },
+  ];
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/login");
+  };
+
+  const initials = user?.displayName
+    ? user.displayName
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase()
+    : "?";
 
   return (
     <aside
       className={cn(
-        "flex h-screen flex-col border-r border-border bg-card transition-all duration-200",
-        sidebarOpen ? "w-56" : "w-16"
+        "border-border bg-card flex h-screen flex-col border-r transition-all duration-200",
+        sidebarOpen ? "w-56" : "w-14"
       )}
     >
-      <div className="flex h-14 items-center justify-between border-b border-border px-3">
+      {/* Logo + collapse */}
+      <div className="border-border flex h-14 items-center justify-between border-b px-3">
         {sidebarOpen && (
           <span className="bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-lg font-bold text-transparent">
             Jorh
@@ -41,25 +66,33 @@ export function Sidebar() {
         )}
         <button
           onClick={toggleSidebar}
-          className="ml-auto rounded-md p-1.5 hover:bg-muted transition-colors"
+          className={cn(
+            "hover:bg-muted rounded-md p-1.5 transition-colors",
+            !sidebarOpen && "mx-auto"
+          )}
           aria-label="Toggle sidebar"
         >
           <ChevronLeft
-            className={cn("h-4 w-4 text-muted-foreground transition-transform", !sidebarOpen && "rotate-180")}
+            className={cn(
+              "text-muted-foreground h-4 w-4 transition-transform",
+              !sidebarOpen && "rotate-180"
+            )}
           />
         </button>
       </div>
 
+      {/* Nav */}
       <nav className="flex-1 overflow-y-auto p-2">
-        <ul className="space-y-1">
+        <ul className="space-y-0.5">
           {navItems.map(({ href, icon: Icon, label }) => {
             const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
             return (
               <li key={href}>
                 <Link
                   to={href}
+                  title={!sidebarOpen ? label : undefined}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                    "flex items-center gap-3 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors",
                     active
                       ? "bg-primary/10 text-primary"
                       : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -74,19 +107,39 @@ export function Sidebar() {
         </ul>
       </nav>
 
-      {sidebarOpen && user && (
-        <div className="border-t border-border p-3">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
-              {user.displayName?.[0]?.toUpperCase() ?? "?"}
+      {/* User footer */}
+      <div className="border-border border-t p-2">
+        {sidebarOpen ? (
+          <div className="flex items-center gap-2 rounded-lg px-2 py-1.5">
+            <div className="bg-primary/10 text-primary flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold">
+              {initials}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-xs font-medium">{user.displayName}</p>
-              <p className="truncate text-[10px] capitalize text-muted-foreground">{user.plan} plan</p>
+              <p className="truncate text-xs font-medium leading-tight">
+                {user?.displayName ?? "User"}
+              </p>
+              <p className="text-muted-foreground truncate text-[10px] capitalize">
+                {user?.plan ?? "free"} plan
+              </p>
             </div>
+            <button
+              onClick={handleSignOut}
+              className="text-muted-foreground hover:bg-muted hover:text-foreground rounded-md p-1 transition-colors"
+              title="Sign out"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+            </button>
           </div>
-        </div>
-      )}
+        ) : (
+          <button
+            onClick={handleSignOut}
+            className="bg-primary/10 text-primary hover:bg-primary/20 mx-auto flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold transition-colors"
+            title="Sign out"
+          >
+            {initials}
+          </button>
+        )}
+      </div>
     </aside>
   );
 }

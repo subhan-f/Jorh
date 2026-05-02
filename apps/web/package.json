@@ -4,13 +4,14 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "dev": "astro dev --port 3000",
+    "dev": "astro dev --port 3100",
     "build": "astro build",
     "preview": "astro preview",
     "lint": "eslint src",
     "typecheck": "astro check"
   },
   "dependencies": {
+    "@astrojs/check": "^0.9.9",
     "@astrojs/react": "^5.0.4",
     "@astrojs/sitemap": "3.7.2",
     "@jorh/firebase": "workspace:*",
