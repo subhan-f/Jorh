@@ -32,7 +32,7 @@ steps:
       - ${_PROJECT_ID}
 
 substitutions:
-  _PROJECT_ID: ""
+  _PROJECT_ID: "jorh-1"
   _REGION: us-central1
   _SERVICE: jorh-api
   _TAG: latest
