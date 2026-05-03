@@ -8,6 +8,7 @@ import {
   Settings,
   ChevronLeft,
   LogOut,
+  Users,
 } from "lucide-react";
 import { cn } from "@jorh/ui";
 import { useUiStore } from "@/store/ui.store";
@@ -27,9 +28,14 @@ export function Sidebar() {
     {
       href: getRoleDashboardPath(role),
       icon: LayoutDashboard,
-      label: role === "admin" ? "Admin Dashboard" : "Client Dashboard",
+      label: role === "admin" ? "Overview" : "Dashboard",
     },
-    { href: withRolePath(role, "/links"), icon: Link2, label: "Links" },
+    ...(role === "admin"
+      ? [
+          { href: "/admin/users", icon: Users, label: "Users" },
+          { href: "/admin/links", icon: Link2, label: "All Links" },
+        ]
+      : [{ href: withRolePath(role, "/links"), icon: Link2, label: "Links" }]),
     { href: withRolePath(role, "/tools/qr"), icon: QrCode, label: "QR Codes" },
     { href: withRolePath(role, "/tools/whatsapp"), icon: MessageCircle, label: "WhatsApp" },
     { href: withRolePath(role, "/analytics"), icon: BarChart2, label: "Analytics" },
@@ -44,7 +50,7 @@ export function Sidebar() {
   const initials = user?.displayName
     ? user.displayName
         .split(" ")
-        .map((n: any) => n[0])
+        .map((n: string) => n[0])
         .join("")
         .slice(0, 2)
         .toUpperCase()

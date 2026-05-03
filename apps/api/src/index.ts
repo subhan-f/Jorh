@@ -11,6 +11,7 @@ import { analyticsRoutes } from "./routes/analytics.js";
 import { qrRoutes } from "./routes/qr.js";
 import { toolRoutes } from "./routes/tools.js";
 import { billingRoutes } from "./routes/billing.js";
+import { adminRoutes } from "./routes/admin.js";
 
 const app = new Hono();
 
@@ -34,6 +35,7 @@ app.route("/analytics", analyticsRoutes);
 app.route("/qr", qrRoutes);
 app.route("/tools", toolRoutes);
 app.route("/billing", billingRoutes);
+app.route("/admin", adminRoutes);
 
 app.onError(errorMiddleware);
 app.notFound((c) =>

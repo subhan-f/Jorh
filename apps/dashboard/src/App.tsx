@@ -12,6 +12,8 @@ const LoginPage = lazy(() => import("@/pages/Login"));
 const RegisterPage = lazy(() => import("@/pages/Register"));
 const ClientDashboardPage = lazy(() => import("@/pages/Dashboard"));
 const AdminDashboardPage = lazy(() => import("@/pages/AdminDashboard"));
+const AdminUsersPage = lazy(() => import("@/pages/AdminUsers"));
+const AdminLinksPage = lazy(() => import("@/pages/AdminLinks"));
 const LinksPage = lazy(() => import("@/pages/Links"));
 const QrCodesPage = lazy(() => import("@/pages/QrCodes"));
 const WhatsAppPage = lazy(() => import("@/pages/WhatsApp"));
@@ -84,7 +86,8 @@ export default function App() {
 
             <Route element={<RoleGuard allowedRoles={["admin"]} />}>
               <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
-              <Route path="/admin/links" element={<LinksPage />} />
+              <Route path="/admin/users" element={<AdminUsersPage />} />
+              <Route path="/admin/links" element={<AdminLinksPage />} />
               <Route path="/admin/tools/qr" element={<QrCodesPage />} />
               <Route path="/admin/tools/whatsapp" element={<WhatsAppPage />} />
               <Route path="/admin/analytics" element={<AnalyticsPage />} />
