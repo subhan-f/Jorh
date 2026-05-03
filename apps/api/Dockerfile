@@ -23,7 +23,7 @@ COPY packages/utils ./packages/utils
 RUN pnpm exec turbo build --filter=@jorh/api
 
 # Produce a self-contained deployment dir: resolved prod deps + workspace packages
-RUN pnpm deploy --filter=@jorh/api --prod /prod/api
+RUN pnpm deploy --filter=@jorh/api --prod --legacy /prod/api
 
 # ─── Stage 2: Production ──────────────────────────────────────────────────────
 FROM node:22-bookworm-slim AS runner
