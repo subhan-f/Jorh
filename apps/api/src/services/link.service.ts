@@ -59,22 +59,32 @@ export async function getUserLinks(
   opts: { limit?: number; cursor?: string; type?: string } = {}
 ): Promise<{ links: Link[]; hasMore: boolean }> {
   const pageSize = opts.limit ?? 20;
-  let q = adminDb
+
+  // When filtering by type, fetch all non-deleted links and filter in memory.
+  // A Firestore composite index for (ownerId, isDeleted, type, createdAt) would
+  // be needed otherwise, and we don't want to require that index upfront.
+  if (opts.type) {
+    const snap = await adminDb
+      .collection(Collections.LINKS)
+      .where("ownerId", "==", ownerId)
+      .where("isDeleted", "==", false)
+      .orderBy("createdAt", "desc")
+      .limit(500)
+      .get();
+
+    const links = snap.docs
+      .map((d) => ({ id: d.id, ...(d.data() as Omit<Link, "id">) }))
+      .filter((l) => l.type === opts.type);
+
+    return { links, hasMore: false };
+  }
+
+  let q: FirebaseFirestore.Query = adminDb
     .collection(Collections.LINKS)
     .where("ownerId", "==", ownerId)
     .where("isDeleted", "==", false)
     .orderBy("createdAt", "desc")
-    .limit(pageSize + 1) as FirebaseFirestore.Query;
-
-  if (opts.type) {
-    q = adminDb
-      .collection(Collections.LINKS)
-      .where("ownerId", "==", ownerId)
-      .where("isDeleted", "==", false)
-      .where("type", "==", opts.type)
-      .orderBy("createdAt", "desc")
-      .limit(pageSize + 1);
-  }
+    .limit(pageSize + 1);
 
   if (opts.cursor) {
     const cursorDoc = await adminDb.collection(Collections.LINKS).doc(opts.cursor).get();

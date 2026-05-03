@@ -16,7 +16,7 @@ const ClickPayloadSchema = z.object({
   country: z.string().optional(),
   city: z.string().optional(),
   region: z.string().optional(),
-  device: z.enum(["mobile", "tablet", "desktop"]).optional(),
+  device: z.enum(["mobile", "tablet", "desktop", "unknown"]).optional(),
   browser: z.string().optional(),
   os: z.string().optional(),
   referrer: z.string().optional(),

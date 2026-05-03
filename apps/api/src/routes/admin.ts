@@ -23,9 +23,11 @@ adminRoutes.get("/stats", async (c) => {
 
   const tsMs = (ts: unknown): number => {
     if (!ts) return 0;
+    if (ts instanceof Date) return ts.getTime();
     if (typeof (ts as { toMillis?: () => number }).toMillis === "function")
       return (ts as { toMillis: () => number }).toMillis();
-    return new Date(ts as string).getTime();
+    const parsed = new Date(ts as string).getTime();
+    return isNaN(parsed) ? 0 : parsed;
   };
 
   const users = usersSnap.docs.map((d) => d.data() as Record<string, unknown>);

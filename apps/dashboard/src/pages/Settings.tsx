@@ -3,12 +3,10 @@ import { useAuthStore } from "@/store/auth.store";
 import { signOut } from "@jorh/firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { Button, Badge } from "@jorh/ui";
-import { withRolePath } from "@/lib/routing";
 
 export default function SettingsPage() {
   const { user, firebaseUser } = useAuthStore();
   const navigate = useNavigate();
-  const role = user?.role ?? "client";
 
   const handleSignOut = async () => {
     await signOut();
@@ -54,13 +52,14 @@ export default function SettingsPage() {
               plan.
             </p>
             {(user?.plan === "free" || !user?.plan) && (
-              <Button
-                variant="default"
-                size="sm"
-                onClick={() => navigate(withRolePath(role, "/billing"))}
+              <a
+                href="https://jorh.net/pricing"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition-opacity hover:opacity-90"
               >
                 Upgrade to Pro
-              </Button>
+              </a>
             )}
           </section>
 

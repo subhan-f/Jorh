@@ -28,7 +28,10 @@ export default function RegisterPage() {
   const onSubmit = async (data: RegisterInput) => {
     try {
       const { user } = await signUpWithEmail(data.email, data.password);
+      // Update Firebase Auth profile before navigating so useAuthInit picks up
+      // the correct displayName when it calls /auth/verify.
       await updateUserProfile(user, { displayName: data.name });
+      await user.reload();
       navigate("/");
     } catch (err) {
       const code = (err as { code?: string }).code ?? "";

@@ -14,15 +14,16 @@ toolRoutes.post(
   zValidator("json", z.object({ url: z.string().url("Must be a valid URL") })),
   async (c) => {
     const { url } = c.req.valid("json");
-    const shortCode = generateShortCode();
-
-    const existing = await adminDb
-      .collection(Collections.LINKS)
-      .where("shortCode", "==", shortCode)
-      .limit(1)
-      .get();
-
-    const finalCode = existing.empty ? shortCode : generateShortCode();
+    let finalCode = generateShortCode();
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const snap = await adminDb
+        .collection(Collections.LINKS)
+        .where("shortCode", "==", finalCode)
+        .limit(1)
+        .get();
+      if (snap.empty) break;
+      finalCode = generateShortCode();
+    }
     const now = new Date();
 
     const link = {

@@ -13,7 +13,11 @@ export function useAuthInit() {
 
       if (firebaseUser) {
         try {
-          const res = await api.post<User>("/auth/verify", {});
+          // Pass displayName so verify can use it on first-time registration
+          // before Firebase propagates the profile update to the Admin SDK.
+          const res = await api.post<User>("/auth/verify", {
+            displayName: firebaseUser.displayName ?? undefined,
+          });
           if (res.data && !res.error) {
             setUser(res.data);
           } else {

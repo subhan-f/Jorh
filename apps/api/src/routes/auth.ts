@@ -1,4 +1,6 @@
 import { Hono } from "hono";
+import { zValidator } from "@hono/zod-validator";
+import { z } from "zod";
 import { requireAuth, requireRole } from "../middleware/auth.js";
 import { adminDb, adminAuth, Collections } from "../lib/firebase.js";
 import { ok } from "@jorh/types";
@@ -15,10 +17,17 @@ function getDefaultRole(email: string): "client" | "admin" {
   return adminEmails.includes(email.toLowerCase()) ? "admin" : "client";
 }
 
-authRoutes.post("/verify", requireAuth, async (c) => {
+// Optional body — displayName passed by client to avoid race between
+// updateProfile and the first verify call on new registrations.
+const VerifyBodySchema = z.object({
+  displayName: z.string().min(1).max(50).optional(),
+});
+
+authRoutes.post("/verify", requireAuth, zValidator("json", VerifyBodySchema), async (c) => {
   const userId = c.get("userId");
   const userEmail = c.get("userEmail");
   const defaultRole = getDefaultRole(userEmail);
+  const { displayName: bodyDisplayName } = c.req.valid("json");
 
   const userRef = adminDb.collection(Collections.USERS).doc(userId);
   const userDoc = await userRef.get();
@@ -27,7 +36,7 @@ authRoutes.post("/verify", requireAuth, async (c) => {
     const firebaseUser = await adminAuth.getUser(userId);
     const newUser = {
       email: userEmail,
-      displayName: firebaseUser.displayName ?? userEmail.split("@")[0],
+      displayName: bodyDisplayName ?? firebaseUser.displayName ?? userEmail.split("@")[0],
       avatarUrl: firebaseUser.photoURL ?? null,
       role: defaultRole,
       plan: "free",
