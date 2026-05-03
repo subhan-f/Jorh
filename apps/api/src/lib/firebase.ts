@@ -16,6 +16,8 @@ if (getApps().length === 0) {
 
 export const adminAuth = getAuth();
 export const adminDb = getFirestore();
+// Firestore rejects undefined field values by default; this makes it silently omit them
+adminDb.settings({ ignoreUndefinedProperties: true });
 export const adminStorage = getStorage();
 
 export const Collections = {
