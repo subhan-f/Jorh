@@ -63,8 +63,8 @@ steps:
         NODE_ENV=production
       - --set-secrets
       - >-
-        FIREBASE_PRIVATE_KEY=projects/${_PROJECT_ID}/secrets/jorh-firebase-private-key/versions/latest,
-        INTERNAL_API_SECRET=projects/${_PROJECT_ID}/secrets/jorh-internal-api-secret/versions/latest
+        FIREBASE_PRIVATE_KEY=jorh-firebase-private-key:latest,
+        INTERNAL_API_SECRET=jorh-internal-api-secret:latest
 
 substitutions:
   _PROJECT_ID: "jorh-1"
