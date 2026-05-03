@@ -19,7 +19,7 @@ app.use("*", secureHeaders());
 app.use(
   "*",
   cors({
-    origin: [env.WEB_URL, env.APP_URL],
+    origin: env.CORS_ORIGINS,
     allowHeaders: ["Authorization", "Content-Type", "X-Internal-Key"],
     allowMethods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     credentials: true,

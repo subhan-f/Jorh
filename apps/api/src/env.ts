@@ -7,8 +7,12 @@ dotenv.config({ path: path.resolve("../../.env") });
 const EnvSchema = z.object({
   PORT: z.coerce.number().default(3002),
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
-  WEB_URL: z.string().url().default("http://localhost:3000"),
-  APP_URL: z.string().url().default("http://localhost:3001"),
+  // Pipe-separated list of allowed CORS origins, e.g. "https://a.com|https://b.com"
+  // Pipe avoids conflict with the comma delimiter used by `gcloud --set-env-vars`
+  CORS_ORIGINS: z
+    .string()
+    .default("http://localhost:3000|http://localhost:3001")
+    .transform((s) => s.split("|").map((o) => o.trim()).filter(Boolean)),
   ADMIN_EMAILS: z.string().default(""),
   // Firebase Admin
   FIREBASE_PROJECT_ID: z.string(),

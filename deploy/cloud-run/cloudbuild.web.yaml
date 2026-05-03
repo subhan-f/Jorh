@@ -88,8 +88,6 @@ substitutions:
   _PUBLIC_POSTHOG_HOST: ""
 
 options:
-  machineType: E2_HIGHCPU_8
   logging: CLOUD_LOGGING_ONLY
-  diskSizeGb: 100
 
 timeout: 1200s
