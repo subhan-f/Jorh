@@ -73,8 +73,8 @@ substitutions:
   _TAG: latest
   _FIREBASE_PROJECT_ID: "jorh-1"
   _FIREBASE_CLIENT_EMAIL: "firebase-adminsdk-fbsvc@jorh-1.iam.gserviceaccount.com"
-  _WEB_URL: "https://jorh.net"
-  _APP_URL: "https://app.jorh.net"
+  _WEB_URL: "https://jorh-web-599388754417.us-central1.run.app"
+  _APP_URL: "https://jorh-dashboard-599388754417.us-central1.run.app"
   _ADMIN_EMAILS: "info@subhanfarrakh.com"
 
 options:

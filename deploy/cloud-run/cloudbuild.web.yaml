@@ -83,7 +83,7 @@ substitutions:
   _PUBLIC_FIREBASE_STORAGE_BUCKET: "jorh-1.appspot.com"
   _PUBLIC_FIREBASE_MESSAGING_SENDER_ID: "599388754417"
   _PUBLIC_FIREBASE_APP_ID: "1:599388754417:web:26d81b39960eed6700f450"
-  _PUBLIC_API_URL: "https://api.jorh.net"
+  _PUBLIC_API_URL: "https://jorh-api-599388754417.us-central1.run.app"
   _PUBLIC_POSTHOG_KEY: ""
   _PUBLIC_POSTHOG_HOST: ""
 

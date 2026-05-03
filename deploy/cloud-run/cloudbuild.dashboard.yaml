@@ -88,8 +88,8 @@ substitutions:
   _VITE_FIREBASE_MESSAGING_SENDER_ID: "599388754417"
   _VITE_FIREBASE_APP_ID: "1:599388754417:web:26d81b39960eed6700f450"
   _VITE_FIREBASE_MEASUREMENT_ID: "G-ZY059QLB4K"
-  _VITE_API_URL: "/api"
-  _VITE_REDIRECT_BASE: "https://jorh.net"
+  _VITE_API_URL: "https://jorh-api-599388754417.us-central1.run.app"
+  _VITE_REDIRECT_BASE: "https://jorh-dashboard-599388754417.us-central1.run.app"
   _VITE_POSTHOG_KEY: ""
   _VITE_POSTHOG_HOST: ""
 
