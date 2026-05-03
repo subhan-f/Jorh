@@ -29,8 +29,12 @@ linkRoutes.get(
 
 linkRoutes.get("/", async (c) => {
   const userId = c.get("userId");
-  const { limit, cursor } = c.req.query();
-  const result = await getUserLinks(userId, { limit: limit ? Number(limit) : undefined, cursor });
+  const { limit, cursor, type } = c.req.query();
+  const result = await getUserLinks(userId, {
+    limit: limit ? Number(limit) : undefined,
+    cursor,
+    type: type || undefined,
+  });
   return c.json(ok(result.links, { hasMore: result.hasMore }));
 });
 

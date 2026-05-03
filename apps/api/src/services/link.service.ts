@@ -56,7 +56,7 @@ export async function createLink(ownerId: string, input: CreateLinkInput): Promi
 
 export async function getUserLinks(
   ownerId: string,
-  opts: { limit?: number; cursor?: string } = {}
+  opts: { limit?: number; cursor?: string; type?: string } = {}
 ): Promise<{ links: Link[]; hasMore: boolean }> {
   const pageSize = opts.limit ?? 20;
   let q = adminDb
@@ -64,7 +64,17 @@ export async function getUserLinks(
     .where("ownerId", "==", ownerId)
     .where("isDeleted", "==", false)
     .orderBy("createdAt", "desc")
-    .limit(pageSize + 1);
+    .limit(pageSize + 1) as FirebaseFirestore.Query;
+
+  if (opts.type) {
+    q = adminDb
+      .collection(Collections.LINKS)
+      .where("ownerId", "==", ownerId)
+      .where("isDeleted", "==", false)
+      .where("type", "==", opts.type)
+      .orderBy("createdAt", "desc")
+      .limit(pageSize + 1);
+  }
 
   if (opts.cursor) {
     const cursorDoc = await adminDb.collection(Collections.LINKS).doc(opts.cursor).get();

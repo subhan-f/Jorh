@@ -34,6 +34,8 @@ const EnvSchema = z.object({
   RESEND_FROM_EMAIL: z.string().email().default("noreply@jorh.net"),
   // Internal auth between Worker and API
   INTERNAL_API_SECRET: z.string().default("dev-secret"),
+  // Base URL for redirect links (used to build QR target URLs)
+  REDIRECT_BASE_URL: z.string().url().default("https://go.jorh.net"),
 });
 
 const parsed = EnvSchema.safeParse(process.env);
