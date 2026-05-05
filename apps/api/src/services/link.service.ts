@@ -63,38 +63,38 @@ export async function getUserLinks(
   // When filtering by type, fetch all non-deleted links and filter in memory.
   // A Firestore composite index for (ownerId, isDeleted, type, createdAt) would
   // be needed otherwise, and we don't want to require that index upfront.
-  if (opts.type) {
-    const snap = await adminDb
-      .collection(Collections.LINKS)
-      .where("ownerId", "==", ownerId)
-      .where("isDeleted", "==", false)
-      .orderBy("createdAt", "desc")
-      .limit(500)
-      .get();
+  // Fetch without orderBy to avoid requiring a composite Firestore index.
+  // Sort in memory instead — composite indexes are declared in firestore.indexes.json
+  // but may not have propagated yet.
+  const baseQuery = adminDb
+    .collection(Collections.LINKS)
+    .where("ownerId", "==", ownerId)
+    .where("isDeleted", "==", false);
 
+  if (opts.type) {
+    const snap = await baseQuery.limit(500).get();
     const links = snap.docs
       .map((d) => ({ id: d.id, ...(d.data() as Omit<Link, "id">) }))
-      .filter((l) => l.type === opts.type);
+      .filter((l) => l.type === opts.type)
+      .sort((a, b) => {
+        const aMs = a.createdAt instanceof Date ? a.createdAt.getTime() : (a.createdAt as unknown as { toMillis: () => number }).toMillis?.() ?? 0;
+        const bMs = b.createdAt instanceof Date ? b.createdAt.getTime() : (b.createdAt as unknown as { toMillis: () => number }).toMillis?.() ?? 0;
+        return bMs - aMs;
+      });
 
     return { links, hasMore: false };
   }
 
-  let q: FirebaseFirestore.Query = adminDb
-    .collection(Collections.LINKS)
-    .where("ownerId", "==", ownerId)
-    .where("isDeleted", "==", false)
-    .orderBy("createdAt", "desc")
-    .limit(pageSize + 1);
-
-  if (opts.cursor) {
-    const cursorDoc = await adminDb.collection(Collections.LINKS).doc(opts.cursor).get();
-    if (cursorDoc.exists) q = q.startAfter(cursorDoc);
-  }
-
-  const snap = await q.get();
+  const snap = await baseQuery.limit(pageSize + 1).get();
   const hasMore = snap.docs.length > pageSize;
   const docs = snap.docs.slice(0, pageSize);
-  const links = docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Link, "id">) }));
+  const links = docs
+    .map((d) => ({ id: d.id, ...(d.data() as Omit<Link, "id">) }))
+    .sort((a, b) => {
+      const aMs = a.createdAt instanceof Date ? a.createdAt.getTime() : (a.createdAt as unknown as { toMillis: () => number }).toMillis?.() ?? 0;
+      const bMs = b.createdAt instanceof Date ? b.createdAt.getTime() : (b.createdAt as unknown as { toMillis: () => number }).toMillis?.() ?? 0;
+      return bMs - aMs;
+    });
 
   return { links, hasMore };
 }
