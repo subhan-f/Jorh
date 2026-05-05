@@ -5,8 +5,7 @@ import { generateShortId } from "../utils/helper.js";
 import { logger } from "../utils/logger.js";
 
 class ShortUrlService {
-  async createShortUrl(originalUrl, domain, userId = null) {
-    // Validate and standardise
+  async createShortUrl(originalUrl, domain, userId) {
     let parsedUrl, parsedDomain;
     try {
       parsedUrl = new URL(originalUrl);
@@ -14,14 +13,13 @@ class ShortUrlService {
       throw new BadRequestError("Invalid original URL");
     }
     try {
-      // Fallback domain
       const domainStr = domain || process.env.DOMAIN || "http://localhost:3000";
       parsedDomain = new URL(domainStr);
     } catch {
       throw new BadRequestError("Invalid domain");
     }
 
-    const shortId = generateShortId(7);
+    const shortId = await generateShortId(7);
     const shortUrl = `${parsedDomain}${shortId}`;
 
     const newEntry = await saveShortUrl({
@@ -31,10 +29,7 @@ class ShortUrlService {
       userId,
     });
 
-    return {
-      short_url: newEntry.short_url,
-      short_id: newEntry.short_id,
-    };
+    return { shortUrl: newEntry.shortUrl, shortId: newEntry.shortId };
   }
 
   async redirectToOriginalUrl(shortId) {
@@ -42,10 +37,13 @@ class ShortUrlService {
     if (!urlEntry) {
       throw new NotFoundError("Short URL not found");
     }
-    return urlEntry.original_url;
+
+    logger.info(`(service) Redirecting shortId ${shortId} to ${urlEntry.originalUrl}`);
+
+    return urlEntry.originalUrl;
   }
 
-  async deleteShortUrl(shortId, userId = null) {
+  async deleteShortUrl(shortId, userId) {
     const deleted = await deleteShortUrlById(shortId, userId);
     if (!deleted) throw new NotFoundError("Short URL not found");
   }

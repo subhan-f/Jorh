@@ -5,9 +5,9 @@ import { ConflictError, InternalServerError, ValidationError } from "../utils/Ap
 export const saveShortUrl = async ({ shortId, originalUrl, shortUrl, userId }) => {
   try {
     const newShortUrl = new ShortUrl({
-      original_url: originalUrl,
-      short_id: shortId, // FIXED: use the parameter, not hardcoded
-      short_url: shortUrl,
+      originalUrl: originalUrl,
+      shortId: shortId, // FIXED: use the parameter, not hardcoded
+      shortUrl: shortUrl,
       user: userId,
     });
     await newShortUrl.save();
@@ -27,10 +27,7 @@ export const saveShortUrl = async ({ shortId, originalUrl, shortUrl, userId }) =
 
 export const findShortUrlByShortId = async (shortId) => {
   try {
-    const urlEntry = await ShortUrl.findOneAndUpdate(
-      { short_id: shortId },
-      { $inc: { clicks: 1 } }
-    );
+    const urlEntry = await ShortUrl.findOneAndUpdate({ shortId: shortId }, { $inc: { clicks: 1 } });
     return urlEntry;
   } catch (error) {
     throw new InternalServerError("Database query failed");

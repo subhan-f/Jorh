@@ -1,18 +1,18 @@
 import mongoose from "mongoose";
 
-const shortUrlSchema = new mongoose.Schema(
+const ShortUrlSchema = new mongoose.Schema(
   {
-    original_url: {
+    originalUrl: {
       type: String,
       required: true,
     },
-    short_id: {
+    shortId: {
       type: String,
       required: true,
       unique: true,
       index: true,
     },
-    short_url: {
+    shortUrl: {
       type: String,
       unique: true,
     },
@@ -28,6 +28,6 @@ const shortUrlSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const ShortUrl = mongoose.model("ShortUrl", shortUrlSchema);
+const ShortUrl = mongoose.model("ShortUrl", ShortUrlSchema);
 
 export default ShortUrl;
