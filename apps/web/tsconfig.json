@@ -1,5 +1,0 @@
-{
-  "extends": "@jorh/tsconfig/astro.json",
-  "include": ["src/**/*"],
-  "exclude": ["dist"]
-}
