@@ -45,7 +45,8 @@ firestore-debug.log
 
 .claude/
 .husky/
-
-out.json
-
 tmp/
+
+# ----- EXPORTS -----
+out.json
+project-files-export.json
