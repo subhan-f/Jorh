@@ -12,7 +12,7 @@ COPY --from=pruner /app/out/json/ .
 RUN pnpm install --frozen-lockfile --prod
 COPY --from=pruner /app/out/full/ .
 
-FROM node:22-alpine AS runner
+FROM node:alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 COPY --from=installer /app .
