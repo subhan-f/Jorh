@@ -1,0 +1,65 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --scrollbar-thumb: #2d3748;
+    --scrollbar-track: #1a202c;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 9999px;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer utilities {
+  .sidebar-link {
+    @apply flex items-center gap-2 px-3 py-1.5 rounded-md text-sm text-slate-400 hover:text-slate-100 hover:bg-sidebar-hover transition-colors duration-150;
+  }
+
+  .sidebar-link.active {
+    @apply text-slate-100 bg-sidebar-active;
+  }
+
+  .method-get {
+    @apply bg-emerald-500/15 text-emerald-400 border border-emerald-500/30;
+  }
+
+  .method-post {
+    @apply bg-blue-500/15 text-blue-400 border border-blue-500/30;
+  }
+
+  .method-patch {
+    @apply bg-amber-500/15 text-amber-400 border border-amber-500/30;
+  }
+
+  .method-delete {
+    @apply bg-red-500/15 text-red-400 border border-red-500/30;
+  }
+
+  .method-put {
+    @apply bg-violet-500/15 text-violet-400 border border-violet-500/30;
+  }
+}

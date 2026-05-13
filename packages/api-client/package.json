@@ -2,9 +2,14 @@
   "name": "@repo/api-client",
   "version": "0.0.1",
   "private": true,
-  "main": "./src/index.js",
-  "type": "module",
-  "dependencies": {
-    "mongoose": "^9.6.2"
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "typescript": "^5.7.3"
   }
 }

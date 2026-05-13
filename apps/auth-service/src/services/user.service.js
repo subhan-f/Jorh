@@ -8,7 +8,7 @@ class UserService {
   };
 
   updateUserProfile = async (userId, data) => {
-    const user = await User.findByIdAndUpdate(userId, data, { new: true }).select("-password");
+    const user = await User.findByIdAndUpdate(userId, data, { returnDocument: "after" }).select("-password");
     if (!user) throw new Error("User not found");
     return user;
   };

@@ -30,7 +30,7 @@ class LinkService {
   };
 
   updateLink = async (slug, userId, newData) => {
-    const link = await LinkModel.findOneAndUpdate({ slug, user: userId }, newData, { new: true });
+    const link = await LinkModel.findOneAndUpdate({ slug, user: userId }, newData, { returnDocument: "after" });
     if (!link) throw new Error("Link not found");
 
     await linkPublisher.publishUpdatedLink({
