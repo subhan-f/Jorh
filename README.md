@@ -1,159 +1,138 @@
-# Turborepo starter
+# Jorh
 
-This Turborepo starter is maintained by the Turborepo core team.
+A microservices-based URL shortener platform built as a Turborepo monorepo.
 
-## Using this example
+## Architecture
 
-Run the following command:
+```
+                        ┌─────────────────┐
+                        │   API Gateway   │  :3000
+                        │  (rate limit,   │
+                        │   CORS, proxy)  │
+                        └────────┬────────┘
+                                 │
+          ┌──────────────────────┼───────────────────────┐
+          │                      │                       │
+   ┌──────▼──────┐      ┌────────▼───────┐      ┌────────▼────────┐
+   │    Auth     │      │     Links      │      │   Analytics     │
+   │   Service   │:3001 │    Service     │:3002 │    Service      │:3003
+   └─────────────┘      └───────┬────────┘      └────────▲────────┘
+                                │  link.clicked          │
+                                └──────── RabbitMQ ──────┘
+                                           (fanout)
 
-```sh
-npx create-turbo@latest
+   ┌─────────────────┐      ┌──────────────────────────┐
+   │ Redirect Service│:3004 │       Docs App           │
+   │  (slug → URL)   │      │  (Remix, API reference)  │
+   └─────────────────┘      └──────────────────────────┘
 ```
 
-## What's inside?
+| Service             | Port | Description                                         |
+| ------------------- | ---- | --------------------------------------------------- |
+| `api-gateway`       | 3000 | Entry point — CORS, rate limiting, request proxying |
+| `auth-service`      | 3001 | JWT auth — register, login, logout, profile         |
+| `links-service`     | 3002 | CRUD for short links, custom slugs                  |
+| `analytics-service` | 3003 | Click tracking, referrers, geo distribution         |
+| `redirect-service`  | 3004 | Slug resolution with in-memory cache                |
+| `docs`              | 5173 | Remix API reference site                            |
 
-This Turborepo includes the following packages/apps:
+## Tech stack
 
-### Apps and Packages
+- **Runtime**: Node.js 22 (ESM), Express 5
+- **Database**: MongoDB (Mongoose)
+- **Message broker**: RabbitMQ (fanout exchange)
+- **Auth**: JWT (access + refresh tokens, server-side blacklist)
+- **Docs**: Remix + Tailwind CSS
+- **Monorepo**: Turborepo + pnpm workspaces
+- **Containers**: Docker + Docker Compose
+- **CI/CD**: GitHub Actions → GHCR
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+## Monorepo structure
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo build
+```
+apps/
+  api-gateway/
+  auth-service/
+  links-service/
+  analytics-service/
+  redirect-service/
+  docs/
+packages/
+  shared-auth/        # JWT sign/verify helpers
+  shared-db/          # Mongoose connection
+  shared-env/         # createConfig(), SERVICE_PORTS
+  shared-errors/      # AppError hierarchy, error handler
+  shared-logger/      # Pino logger + HTTP logger
+  shared-messaging/   # RabbitMQ publish/subscribe
+  ui/                 # shadcn-style React components
+  api-client/         # Typed fetch client for the gateway
 ```
 
-Without global `turbo`, use your package manager:
+## Prerequisites
+
+- Node.js ≥ 18
+- pnpm ≥ 9
+- MongoDB (Atlas or local)
+- RabbitMQ (CloudAMQP or local via Docker)
+
+## Getting started
 
 ```sh
-cd my-turborepo
-npx turbo build
-pnpm dlx turbo build
-pnpm exec turbo build
+# 1. Clone
+git clone https://github.com/subhan-f/Jorh.git && cd Jorh
+
+# 2. Install dependencies
+pnpm install
+
+# 3. Configure environment
+cp .env.example .env
+# Fill in MONGO_URI, RABBITMQ_URI, JWT secrets
+
+# 4. Start all services in dev mode (with hot reload)
+pnpm dev
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+## Docker
 
 ```sh
-turbo build --filter=docs
+# Build and start all services + RabbitMQ
+docker compose up --build
+
+# Start in detached mode
+docker compose up -d --build
 ```
 
-Without global `turbo`:
+> MongoDB is not included in `docker-compose.yml` — point `MONGO_URI` in your `.env` at Atlas or a separately managed instance.
 
-```sh
-npx turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
+## Environment variables
+
+Copy `.env.example` to `.env` and fill in the values:
+
+| Variable                 | Description                             |
+| ------------------------ | --------------------------------------- |
+| `MONGO_URI`              | MongoDB connection string               |
+| `RABBITMQ_URI`           | RabbitMQ AMQP connection string         |
+| `JWT_ACCESS_SECRET`      | Secret for signing access tokens        |
+| `JWT_ACCESS_EXPIRATION`  | Access token TTL (e.g. `30m`)           |
+| `JWT_REFRESH_SECRET`     | Secret for signing refresh tokens       |
+| `JWT_REFRESH_EXPIRATION` | Refresh token TTL (e.g. `30d`)          |
+| `CORS_ORIGINS`           | Comma-separated allowed origins         |
+| `API_BASE_URL`           | Public gateway URL shown in the docs UI |
+
+## CI/CD
+
+On every push to `main`, GitHub Actions builds all five service images in parallel and pushes them to GHCR:
+
+```
+ghcr.io/subhan-f/jorh-api-gateway:latest
+ghcr.io/subhan-f/jorh-auth-service:latest
+ghcr.io/subhan-f/jorh-links-service:latest
+ghcr.io/subhan-f/jorh-analytics-service:latest
+ghcr.io/subhan-f/jorh-redirect-service:latest
 ```
 
-### Develop
+Each image is also tagged with `sha-<short-commit>` for pinned deployments.
 
-To develop all apps and packages, run the following command:
+## API documentation
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo dev
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo dev
-pnpm exec turbo dev
-pnpm exec turbo dev
-```
-
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo dev --filter=web
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo login
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo login
-pnpm exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo link
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo link
-pnpm exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+Run `pnpm dev` and open [http://localhost:5173](http://localhost:5173) to browse the interactive API reference.
