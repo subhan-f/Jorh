@@ -37,6 +37,5 @@ yarn-error.log*
 .DS_Store
 *.pem
 
-exports/
-scripts/exports/
+
 project-files-export.json

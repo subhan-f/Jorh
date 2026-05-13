@@ -336,7 +336,7 @@ if (process.argv[1] === __filename) {
   }
 
   let projectPath = process.cwd();
-  let outputPath = "scripts/exports/project-files-export.json";
+  let outputPath = "scripts/project-files-export.json";
   if (positional[0]) projectPath = path.resolve(positional[0]);
   if (positional[1]) outputPath = positional[1];
 
