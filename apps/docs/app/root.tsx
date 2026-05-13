@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "@remix-run/react";
 import { useState } from "react";
-import type { LinksFunction } from "@remix-run/node";
+import type { LinksFunction, MetaFunction } from "@remix-run/node";
 import stylesheet from "~/styles/tailwind.css?url";
 
 export const links: LinksFunction = () => [
@@ -11,12 +11,10 @@ export const links: LinksFunction = () => [
   { rel: "icon", href: "/favicon.ico" },
 ];
 
-export function meta() {
-  return [
-    { title: "Jorh API — Documentation" },
-    { name: "description", content: "Complete REST API documentation for the Jorh URL shortener platform." },
-  ];
-}
+export const meta: MetaFunction = () => [
+  { title: "Jorh API — Documentation" },
+  { name: "description", content: "Complete REST API documentation for the Jorh URL shortener platform." },
+];
 
 export default function App() {
   const [queryClient] = useState(

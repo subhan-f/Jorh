@@ -1,5 +1,12 @@
 import type { HttpMethod } from "~/lib/utils";
-import type { Param } from "~/components/ParamTable";
+
+export interface Param {
+  name: string;
+  type: string;
+  required: boolean;
+  description: string;
+  example?: string;
+}
 
 export interface CodeExample {
   label: string;

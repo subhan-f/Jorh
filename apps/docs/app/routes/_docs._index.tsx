@@ -1,6 +1,14 @@
 import type { MetaFunction } from "@remix-run/node";
 import { Link } from "@remix-run/react";
 import { Zap, Lock, BarChart2, Link2, Globe } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@repo/ui/components/table";
 
 export const meta: MetaFunction = () => [
   { title: "Jorh API — Introduction" },
@@ -70,19 +78,22 @@ export default function IndexPage() {
       <section id="authentication" className="scroll-mt-24 mb-12">
         <h2 className="text-2xl font-bold text-slate-900 mb-2">Base URL &amp; Authentication</h2>
         <p className="text-slate-500 mb-5 text-[15px]">
-          All requests are routed through the API gateway. Authenticated endpoints require a Bearer token obtained from the <Link to="/authentication#login" className="text-brand hover:underline">Login</Link> endpoint.
+          All requests are routed through the API gateway. Authenticated endpoints require a Bearer
+          token obtained from the{" "}
+          <Link to="/authentication#login" className="text-brand hover:underline">
+            Login
+          </Link>{" "}
+          endpoint.
         </p>
 
-        <div className="rounded-xl border border-slate-200 overflow-hidden mb-6">
+        <div className="rounded-xl border border-slate-200 overflow-hidden mb-4">
           <div className="bg-slate-50 border-b border-slate-200 px-4 py-2.5 text-xs font-semibold text-slate-500 uppercase tracking-wide">
             Base URL
           </div>
-          <div className="px-4 py-3 font-mono text-sm text-slate-800 bg-white">
-            {BASE_URL}
-          </div>
+          <div className="px-4 py-3 font-mono text-sm text-slate-800 bg-white">{BASE_URL}</div>
         </div>
 
-        <div className="rounded-xl border border-slate-200 overflow-hidden">
+        <div className="rounded-xl border border-slate-200 overflow-hidden mb-5">
           <div className="bg-slate-50 border-b border-slate-200 px-4 py-2.5 text-xs font-semibold text-slate-500 uppercase tracking-wide">
             Authorization Header
           </div>
@@ -91,12 +102,13 @@ export default function IndexPage() {
           </div>
         </div>
 
-        <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 px-5 py-4">
+        <div className="rounded-xl border border-amber-200 bg-amber-50 px-5 py-4">
           <div className="flex gap-3">
             <Lock size={15} className="text-amber-600 mt-0.5 flex-shrink-0" />
-            <div className="text-[13px] text-amber-800 leading-relaxed">
-              Tokens are short-lived JWTs. Refresh by logging in again. Logged-out tokens are blacklisted server-side and will be rejected even before expiry.
-            </div>
+            <p className="text-[13px] text-amber-800 leading-relaxed">
+              Tokens are short-lived JWTs. Refresh by logging in again. Logged-out tokens are
+              blacklisted server-side and will be rejected even before expiry.
+            </p>
           </div>
         </div>
       </section>
@@ -104,71 +116,73 @@ export default function IndexPage() {
       {/* Error Codes */}
       <section id="errors" className="scroll-mt-24 mb-12">
         <h2 className="text-2xl font-bold text-slate-900 mb-2">Error Codes</h2>
-        <p className="text-slate-500 mb-5 text-[15px]">
-          All errors follow a consistent JSON shape:
-        </p>
+        <p className="text-slate-500 mb-5 text-[15px]">All errors follow a consistent JSON shape:</p>
+
         <div className="rounded-xl bg-[#0d1117] border border-[#30363d] px-5 py-4 font-mono text-sm text-slate-300 mb-6">
-          <span className="text-[#7ee787]">{"{"}</span>{"\n"}
-          {"  "}<span className="text-[#79c0ff]">"success"</span>
+          <span className="text-[#7ee787]">{"{"}</span>
+          {"\n  "}
+          <span className="text-[#79c0ff]">"success"</span>
           <span className="text-slate-400">: </span>
-          <span className="text-[#f97316]">false</span>,{"\n"}
-          {"  "}<span className="text-[#79c0ff]">"message"</span>
+          <span className="text-[#f97316]">false</span>
+          {",\n  "}
+          <span className="text-[#79c0ff]">"message"</span>
           <span className="text-slate-400">: </span>
-          <span className="text-[#a5d6ff]">"Human-readable error message"</span>{"\n"}
+          <span className="text-[#a5d6ff]">"Human-readable error message"</span>
+          {"\n"}
           <span className="text-[#7ee787]">{"}"}</span>
         </div>
 
-        <div className="rounded-xl border border-slate-200 overflow-hidden">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-slate-50 border-b border-slate-200">
-                <th className="px-4 py-2.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide w-20">Status</th>
-                <th className="px-4 py-2.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide w-44">Name</th>
-                <th className="px-4 py-2.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Description</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {errorCodes.map((e) => (
-                <tr key={e.status} className="hover:bg-slate-50/50">
-                  <td className="px-4 py-2.5 font-mono text-[13px] text-rose-600 font-medium">{e.status}</td>
-                  <td className="px-4 py-2.5 text-[13px] text-slate-700 font-medium">{e.name}</td>
-                  <td className="px-4 py-2.5 text-[13px] text-slate-500">{e.description}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-20">Status</TableHead>
+              <TableHead className="w-44">Name</TableHead>
+              <TableHead>Description</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {errorCodes.map((e) => (
+              <TableRow key={e.status}>
+                <TableCell className="font-mono text-rose-600 font-medium">{e.status}</TableCell>
+                <TableCell className="text-slate-700 font-medium">{e.name}</TableCell>
+                <TableCell className="text-slate-500">{e.description}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </section>
 
       {/* Rate Limiting */}
       <section id="rate-limiting" className="scroll-mt-24">
         <h2 className="text-2xl font-bold text-slate-900 mb-2">Rate Limiting</h2>
         <p className="text-slate-500 mb-5 text-[15px]">
-          The API gateway applies per-IP rate limiting. Exceeding the limit returns <code className="text-rose-600 font-mono text-[13px] bg-rose-50 px-1.5 py-0.5 rounded">429 Too Many Requests</code>.
+          The API gateway applies per-IP rate limiting. Exceeding the limit returns{" "}
+          <code className="text-rose-600 font-mono text-[13px] bg-rose-50 px-1.5 py-0.5 rounded">
+            429 Too Many Requests
+          </code>
+          .
         </p>
-        <div className="rounded-xl border border-slate-200 overflow-hidden">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-slate-50 border-b border-slate-200">
-                <th className="px-4 py-2.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Tier</th>
-                <th className="px-4 py-2.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Limit</th>
-                <th className="px-4 py-2.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Window</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              <tr className="hover:bg-slate-50/50">
-                <td className="px-4 py-2.5 text-[13px] text-slate-700 font-medium">Public</td>
-                <td className="px-4 py-2.5 text-[13px] font-mono text-slate-600">100 requests</td>
-                <td className="px-4 py-2.5 text-[13px] text-slate-500">15 minutes</td>
-              </tr>
-              <tr className="hover:bg-slate-50/50">
-                <td className="px-4 py-2.5 text-[13px] text-slate-700 font-medium">Authenticated</td>
-                <td className="px-4 py-2.5 text-[13px] font-mono text-slate-600">500 requests</td>
-                <td className="px-4 py-2.5 text-[13px] text-slate-500">15 minutes</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Tier</TableHead>
+              <TableHead>Limit</TableHead>
+              <TableHead>Window</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell className="text-slate-700 font-medium">Public</TableCell>
+              <TableCell className="font-mono text-slate-600">100 requests</TableCell>
+              <TableCell className="text-slate-500">15 minutes</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className="text-slate-700 font-medium">Authenticated</TableCell>
+              <TableCell className="font-mono text-slate-600">500 requests</TableCell>
+              <TableCell className="text-slate-500">15 minutes</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
       </section>
     </div>
   );

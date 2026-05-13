@@ -17,9 +17,12 @@ export function highlightJson(raw: string): string {
 
 export function highlightBash(raw: string): string {
   return raw
-    .replace(/^(curl)/gm, '<span class="text-yellow-300">curl</span>')
+    // Flags must run first (pure text) — after curl wrapping, "-" appears inside span
+    // class names like "text-yellow-300" and would be falsely matched
     .replace(/(--\w[\w-]*|-[A-Za-z])/g, '<span class="text-blue-300">$1</span>')
-    // URL before strings so the URL span is the innermost (wins the color battle)
+    .replace(/^(curl)/gm, '<span class="text-yellow-300">curl</span>')
+    // URL before strings — URL becomes inner span so it wins the color over the
+    // surrounding single-quoted string (sky-blue URL inside emerald quotes looks correct)
     .replace(/(https?:\/\/[^\s\\']+)/g, '<span class="text-sky-300">$1</span>')
     .replace(/('[^']*')/g, '<span class="text-emerald-300">$1</span>')
     .replace(/(\\)$/gm, '<span class="text-slate-400">\\</span>');

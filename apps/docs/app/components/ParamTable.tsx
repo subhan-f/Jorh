@@ -8,14 +8,9 @@ import {
 } from "@repo/ui/components/table";
 import { Badge } from "@repo/ui/components/badge";
 import { cn } from "~/lib/utils";
+import type { Param } from "~/lib/api-spec";
 
-export interface Param {
-  name: string;
-  type: string;
-  required: boolean;
-  description: string;
-  example?: string;
-}
+export type { Param };
 
 interface Props {
   title: string;
