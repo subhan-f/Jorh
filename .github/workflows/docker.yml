@@ -1,4 +1,4 @@
-name: Build & Push to Artifact Registry
+name: Build, Push & Deploy
 
 on:
   push:
@@ -9,16 +9,15 @@ on:
 env:
   PROJECT_ID: jorh-1
   REGION: us-central1
-  REGISTRY: us-central1-docker.pkg.dev
   IMAGE_PREFIX: us-central1-docker.pkg.dev/jorh-1/jorh
 
 jobs:
-  build:
+  build-push-deploy:
     name: ${{ matrix.service }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write  # required for Workload Identity Federation
+      id-token: write
 
     strategy:
       fail-fast: false
@@ -62,6 +61,7 @@ jobs:
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
 
       - name: Build and push
+        id: build
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -71,3 +71,11 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=${{ matrix.service }}
           cache-to: type=gha,scope=${{ matrix.service }},mode=max
+
+      - name: Deploy to Cloud Run
+        if: github.event_name != 'pull_request'
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: ${{ matrix.service }}
+          region: ${{ env.REGION }}
+          image: ${{ env.IMAGE_PREFIX }}/${{ matrix.service }}@${{ steps.build.outputs.digest }}
