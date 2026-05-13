@@ -1,4 +1,5 @@
 import express from "express";
+import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import { createHttpLogger } from "@repo/shared-logger";
 import { createErrorHandler } from "@repo/shared-errors";
@@ -7,6 +8,7 @@ import logger from "./config/logger.js";
 
 const app = express();
 
+app.use(helmet());
 app.use(createHttpLogger(logger));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

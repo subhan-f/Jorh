@@ -1,11 +1,6 @@
 import { createProxyMiddleware } from "http-proxy-middleware";
+import logger from "../config/logger.js";
 
-/**
- * Creates a proxy middleware that forwards requests to the target service.
- * The full request path is preserved as-is.
- *
- * @param {string} target - Base URL of the downstream service
- */
 export function createProxy(target) {
   return createProxyMiddleware({
     target,
@@ -14,8 +9,8 @@ export function createProxy(target) {
       proxyReq: (proxyReq, req) => {
         proxyReq.path = req.originalUrl;
       },
-      error: (err, req, res) => {
-        console.error(`[proxy] ${target} unreachable:`, err.message);
+      error: (err, _req, res) => {
+        logger.error({ target, err: err.message }, "proxy error — service unreachable");
         res.status(502).json({ success: false, message: "Service temporarily unavailable" });
       },
     },

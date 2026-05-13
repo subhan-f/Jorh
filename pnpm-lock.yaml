@@ -50,6 +50,9 @@ importers:
       geoip-lite:
         specifier: ^2.0.2
         version: 2.0.2
+      helmet:
+        specifier: ^8.1.0
+        version: 8.1.0
       mongoose:
         specifier: ^9.6.2
         version: 9.6.2
@@ -81,6 +84,9 @@ importers:
       express-rate-limit:
         specifier: ^8.5.1
         version: 8.5.1(express@5.2.1)
+      helmet:
+        specifier: ^8.1.0
+        version: 8.1.0
       http-proxy-middleware:
         specifier: ^4.0.0
         version: 4.0.0
@@ -118,6 +124,9 @@ importers:
       express:
         specifier: ^5.2.1
         version: 5.2.1
+      helmet:
+        specifier: ^8.1.0
+        version: 8.1.0
       mongoose:
         specifier: ^9.6.2
         version: 9.6.2
@@ -225,6 +234,9 @@ importers:
       express:
         specifier: ^5.2.1
         version: 5.2.1
+      helmet:
+        specifier: ^8.1.0
+        version: 8.1.0
       mongoose:
         specifier: ^9.6.2
         version: 9.6.2
@@ -259,6 +271,9 @@ importers:
       express:
         specifier: ^5.2.1
         version: 5.2.1
+      helmet:
+        specifier: ^8.1.0
+        version: 8.1.0
       mongoose:
         specifier: ^9.6.2
         version: 9.6.2
@@ -2554,6 +2569,10 @@ packages:
 
   hast-util-whitespace@2.0.1:
     resolution: {integrity: sha512-nAxA0v8+vXSBDt3AnRUNjyRIQ0rD+ntpbAp4LnPkumc5M9yUbSMa4XDU9Q6etY4f1Wp4bNgvc1yjiZtsTTrSng==}
+
+  helmet@8.1.0:
+    resolution: {integrity: sha512-jOiHyAZsmnr8LqoPGmCjYAaiuWwjAPLgY8ZX2XrmHawt99/u1y6RgrZMTeoPfpUbV96HOalYgz1qzkRbw54Pmg==}
+    engines: {node: '>=18.0.0'}
 
   help-me@5.0.0:
     resolution: {integrity: sha512-7xgomUX6ADmcYzFik0HzAxh/73YlKR9bmFzf51CZwR+b6YtzU2m0u49hQCqV6SvlqIqsaxovfwdvbnsw3b/zpg==}
@@ -6906,6 +6925,8 @@ snapshots:
       - supports-color
 
   hast-util-whitespace@2.0.1: {}
+
+  helmet@8.1.0: {}
 
   help-me@5.0.0: {}
 

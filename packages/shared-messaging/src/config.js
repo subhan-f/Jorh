@@ -14,17 +14,17 @@ export async function connectMQ(uri) {
   channel = await connection.createChannel();
 
   connection.on("error", (err) => {
-    console.error("[RabbitMQ] connection error:", err.message);
+    process.stderr.write(`[RabbitMQ] connection error: ${err.message}\n`);
     connection = null;
     channel = null;
   });
 
   connection.on("close", () => {
-    console.warn("[RabbitMQ] connection closed — exiting for restart");
+    process.stderr.write("[RabbitMQ] connection closed — exiting for container restart\n");
     process.exit(1);
   });
 
-  console.log("[RabbitMQ] connected");
+  process.stdout.write("[RabbitMQ] connected\n");
   return channel;
 }
 

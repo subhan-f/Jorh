@@ -1,5 +1,6 @@
+import { json } from "@remix-run/node";
 import type { MetaFunction } from "@remix-run/node";
-import { Link } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 import { Zap, Lock, BarChart2, Link2, Globe } from "lucide-react";
 import {
   Table,
@@ -15,7 +16,8 @@ export const meta: MetaFunction = () => [
   { name: "description", content: "Jorh URL shortener API documentation" },
 ];
 
-const BASE_URL = "http://localhost:3000";
+export const loader = () =>
+  json({ baseUrl: process.env.API_BASE_URL ?? "http://localhost:3000" });
 
 const features = [
   { icon: Lock, title: "Auth Service", description: "JWT-based authentication with register, login, logout, and profile management.", href: "/authentication" },
@@ -36,6 +38,7 @@ const errorCodes = [
 ];
 
 export default function IndexPage() {
+  const { baseUrl } = useLoaderData<typeof loader>();
   return (
     <div>
       {/* Hero */}
@@ -90,7 +93,7 @@ export default function IndexPage() {
           <div className="bg-slate-50 border-b border-slate-200 px-4 py-2.5 text-xs font-semibold text-slate-500 uppercase tracking-wide">
             Base URL
           </div>
-          <div className="px-4 py-3 font-mono text-sm text-slate-800 bg-white">{BASE_URL}</div>
+          <div className="px-4 py-3 font-mono text-sm text-slate-800 bg-white">{baseUrl}</div>
         </div>
 
         <div className="rounded-xl border border-slate-200 overflow-hidden mb-5">
@@ -165,21 +168,24 @@ export default function IndexPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Tier</TableHead>
+              <TableHead>Scope</TableHead>
               <TableHead>Limit</TableHead>
               <TableHead>Window</TableHead>
+              <TableHead>Purpose</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             <TableRow>
-              <TableCell className="text-slate-700 font-medium">Public</TableCell>
-              <TableCell className="font-mono text-slate-600">100 requests</TableCell>
+              <TableCell className="text-slate-700 font-medium">Global</TableCell>
+              <TableCell className="font-mono text-slate-600">200 requests</TableCell>
               <TableCell className="text-slate-500">15 minutes</TableCell>
+              <TableCell className="text-slate-500">All routes, per IP</TableCell>
             </TableRow>
             <TableRow>
-              <TableCell className="text-slate-700 font-medium">Authenticated</TableCell>
-              <TableCell className="font-mono text-slate-600">500 requests</TableCell>
+              <TableCell className="text-slate-700 font-medium">Auth endpoints</TableCell>
+              <TableCell className="font-mono text-slate-600">20 requests</TableCell>
               <TableCell className="text-slate-500">15 minutes</TableCell>
+              <TableCell className="text-slate-500">Brute-force protection on login/register</TableCell>
             </TableRow>
           </TableBody>
         </Table>

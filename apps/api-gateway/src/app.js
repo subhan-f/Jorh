@@ -1,4 +1,5 @@
 import express from "express";
+import helmet from "helmet";
 import { createHttpLogger } from "@repo/shared-logger";
 import { REDIRECT_SERVICE_URL } from "./config/env.js";
 import { corsMiddleware } from "./middlewares/cors.middleware.js";
@@ -9,6 +10,7 @@ import logger from "./config/logger.js";
 
 const app = express();
 
+app.use(helmet());
 app.use(createHttpLogger(logger));
 app.use(corsMiddleware);
 app.use(globalRateLimiter);
