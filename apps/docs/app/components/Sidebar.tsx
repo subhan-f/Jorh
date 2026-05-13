@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@remix-run/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Menu, X, Zap } from "lucide-react";
 import { cn, type HttpMethod } from "~/lib/utils";
 import { MethodBadge } from "~/components/MethodBadge";
@@ -79,7 +79,7 @@ const navigation: NavGroup[] = [
 
 function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
   const { pathname } = useLocation();
-  const isActive = pathname === href.split("#")[0] && href === pathname;
+  const isActive = href === pathname;
   return (
     <Link
       to={href}
@@ -95,9 +95,14 @@ function SectionItem({ section }: { section: NavSection }) {
   const isActive = pathname === section.href;
   const [open, setOpen] = useState(isActive);
 
+  useEffect(() => {
+    if (isActive) setOpen(true);
+  }, [isActive]);
+
   return (
     <div>
       <button
+        type="button"
         onClick={() => setOpen((o) => !o)}
         className={cn(
           "sidebar-link w-full text-left font-medium",
@@ -180,6 +185,7 @@ export function Sidebar() {
     <>
       {/* Mobile toggle */}
       <button
+        type="button"
         onClick={() => setMobileOpen(true)}
         className="fixed top-4 left-4 z-50 lg:hidden flex h-9 w-9 items-center justify-center rounded-lg bg-sidebar text-slate-400 shadow-lg border border-sidebar-border"
       >
@@ -202,6 +208,7 @@ export function Sidebar() {
         )}
       >
         <button
+          type="button"
           onClick={() => setMobileOpen(false)}
           className="absolute top-4 right-4 text-slate-400 hover:text-slate-200"
         >

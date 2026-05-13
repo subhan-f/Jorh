@@ -1,5 +1,3 @@
-"use client";
-
 import { cn } from "../lib/utils";
 
 export interface TabsProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -7,7 +5,13 @@ export interface TabsProps extends React.HTMLAttributes<HTMLDivElement> {
   onValueChange?: (value: string) => void;
 }
 
-export function Tabs({ className, ...props }: TabsProps) {
+export function Tabs({
+  className,
+  // consumed by the controlled-tab pattern; not forwarded to DOM
+  value: _value,
+  onValueChange: _onValueChange,
+  ...props
+}: TabsProps) {
   return <div className={cn(className)} {...props} />;
 }
 
