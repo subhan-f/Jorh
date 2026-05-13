@@ -1,0 +1,32 @@
+{
+  "name": "@app/analytics-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "Subhan Farrakh",
+  "license": "ISC",
+  "dependencies": {
+    "@repo/shared-auth": "workspace:*",
+    "@repo/shared-db": "workspace:*",
+    "@repo/shared-env": "workspace:*",
+    "@repo/shared-errors": "workspace:*",
+    "@repo/shared-logger": "workspace:*",
+    "@repo/shared-messaging": "workspace:*",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "geoip-lite": "^2.0.2",
+    "mongoose": "^9.6.2",
+    "ua-parser-js": "^2.0.9"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

@@ -217,6 +217,11 @@ async function exportProjectFiles(projectPath, outputPath, options = {}) {
   const patterns = parseGitignore(gitignorePath);
   console.log(`Loaded ${patterns.length} patterns from .gitignore`);
 
+  // Always ignore the .git folder (even if not in .gitignore)
+  patterns.push(".git");
+  patterns.push("pnpm-lock.yaml");
+  patterns.push("exports");
+
   // Also ignore the export script and the output file (if inside project)
   const selfRel = path.relative(projectPath, __filename).replace(/\\/g, "/");
   patterns.push(selfRel); // ignore this script

@@ -1,0 +1,13 @@
+{
+  "name": "@repo/shared-db",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./src/index.js",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "dependencies": {
+    "mongoose": "^9.6.2"
+  }
+}

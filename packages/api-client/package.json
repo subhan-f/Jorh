@@ -1,0 +1,10 @@
+{
+  "name": "@repo/api-client",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./src/index.js",
+  "type": "module",
+  "dependencies": {
+    "mongoose": "^9.6.2"
+  }
+}

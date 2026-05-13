@@ -1,52 +1,38 @@
-.JORH-v1/
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # Dependencies
-node_modules/
-.pnpm-store/
+node_modules
+.pnp
+.pnp.js
 
-# Build outputs
-dist/
-.astro/
-.next/
-.output/
-.vercel/
-.wrangler/
-
-# Environment
+# Local env files
 .env
 .env.local
-.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Testing
+coverage
 
 # Turbo
-.turbo/
+.turbo
 
-# Editor
-.vscode/settings.json
-.idea/
-*.swp
+# Vercel
+.vercel
 
-# OS
-.DS_Store
-Thumbs.db
+# Build Outputs
+.next/
+out/
+build
+dist
 
-# Logs
-*.log
+
+# Debug
 npm-debug.log*
-pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Test coverage
-coverage/
-
-# Firebase
-.firebase/
-.firebase-*/
-firebase-debug.log
-firestore-debug.log
-
-.claude/
-.husky/
-tmp/
-
-# ----- EXPORTS -----
-out.json
-project-files-export.json
+# Misc
+.DS_Store
+*.pem

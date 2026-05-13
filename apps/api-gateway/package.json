@@ -1,0 +1,27 @@
+{
+  "name": "@app/api-gateway",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "Subhan Farrakh",
+  "license": "ISC",
+  "dependencies": {
+    "@repo/shared-env": "workspace:*",
+    "@repo/shared-logger": "workspace:*",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.5.1",
+    "http-proxy-middleware": "^4.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
