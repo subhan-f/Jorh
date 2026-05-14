@@ -27,6 +27,8 @@ export interface LinkStats {
   topReferrers: Array<{ referrer: string; count: number }>;
   topCountries: Array<{ country: string; count: number }>;
   devices: { mobile: number; desktop: number; tablet: number };
+  browsers: Record<string, number>;
+  operatingSystems: Record<string, number>;
 }
 
 export interface Click {
@@ -47,6 +49,12 @@ export interface ApiResponse<T = unknown> {
   success: boolean;
   result: T;
   message?: string;
+}
+
+export interface ClickHistoryResponse {
+  success: boolean;
+  result: Click[];
+  total: number;
 }
 
 export interface PaginatedResponse<T = unknown> {
@@ -89,11 +97,17 @@ export interface CreateLinkBody {
   originalUrl: string;
   slug?: string;
   title?: string;
+  tags?: string[];
+  expiresAt?: string;
 }
 
 export interface UpdateLinkBody {
   originalUrl?: string;
+  slug?: string;
   title?: string;
+  tags?: string[];
+  expiresAt?: string | null;
+  isActive?: boolean;
 }
 
 // Analytics

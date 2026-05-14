@@ -51,17 +51,28 @@ class LinkService {
   };
 
   updateLink = async (slug, userId, newData) => {
-    const link = await LinkModel.findOneAndUpdate(
-      { slug, user: userId },
-      newData,
-      { returnDocument: "after" },
-    );
+    let link;
+    try {
+      link = await LinkModel.findOneAndUpdate(
+        { slug, user: userId },
+        newData,
+        { returnDocument: "after" },
+      );
+    } catch (err) {
+      if (err.code === 11000) {
+        throw new ConflictError(
+          `The slug "${newData.slug}" is already taken. Please choose a different one.`,
+        );
+      }
+      throw err;
+    }
     if (!link) throw new Error("Link not found");
 
     await linkPublisher.publishUpdatedLink({
-      slug,
+      slug: link.slug,
       originalUrl: link.originalUrl,
       expiresAt: link.expiresAt,
+      isActive: link.isActive,
       userId,
     });
 
