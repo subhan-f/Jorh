@@ -10,6 +10,7 @@ import { jorh } from "../lib/api";
 
 export default function Dashboard() {
   const [showCreate, setShowCreate] = React.useState(false);
+  const [tagFilter, setTagFilter] = React.useState<string | null>(null);
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["links"],
@@ -17,6 +18,16 @@ export default function Dashboard() {
   });
 
   const links = data?.result ?? [];
+
+  const allTags = React.useMemo(() => {
+    const tagSet = new Set<string>();
+    links.forEach((link) => link.tags?.forEach((t) => tagSet.add(t)));
+    return Array.from(tagSet).sort();
+  }, [links]);
+
+  const filteredLinks = tagFilter
+    ? links.filter((link) => link.tags?.includes(tagFilter))
+    : links;
 
   return (
     <div>
@@ -33,6 +44,34 @@ export default function Dashboard() {
           </Button>
         }
       />
+
+      {allTags.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-4">
+          <button
+            onClick={() => setTagFilter(null)}
+            className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+              tagFilter === null
+                ? "bg-indigo-600 text-white"
+                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+            }`}
+          >
+            All
+          </button>
+          {allTags.map((tag) => (
+            <button
+              key={tag}
+              onClick={() => setTagFilter(tagFilter === tag ? null : tag)}
+              className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                tagFilter === tag
+                  ? "bg-indigo-600 text-white"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+              }`}
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+      )}
 
       {isLoading && (
         <div className="space-y-3">
@@ -68,9 +107,15 @@ export default function Dashboard() {
         </div>
       )}
 
-      {!isLoading && !isError && links.length > 0 && (
+      {!isLoading && !isError && links.length > 0 && filteredLinks.length === 0 && (
+        <p className="text-sm text-slate-400 text-center py-8">
+          No links tagged "{tagFilter}".
+        </p>
+      )}
+
+      {!isLoading && !isError && filteredLinks.length > 0 && (
         <div className="space-y-3">
-          {links.map((link) => (
+          {filteredLinks.map((link) => (
             <LinkCard key={link._id} link={link} />
           ))}
         </div>

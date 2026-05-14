@@ -1,5 +1,6 @@
 import React from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import {
   Dialog,
   DialogContent,
@@ -11,41 +12,43 @@ import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 import { Button } from "@repo/ui/components/button";
 import { useToast } from "@repo/ui/components/toast";
-import { jorh } from "../lib/api";
+import type { Link } from "@repo/api-client";
 import { ApiError } from "@repo/api-client";
+import { jorh } from "../lib/api";
 
-interface CreateLinkDialogProps {
+interface EditLinkDialogProps {
+  link: Link;
   open: boolean;
   onClose: () => void;
 }
 
-export default function CreateLinkDialog({ open, onClose }: CreateLinkDialogProps) {
+export default function EditLinkDialog({ link, open, onClose }: EditLinkDialogProps) {
   const qc = useQueryClient();
+  const navigate = useNavigate();
   const { toast } = useToast();
 
-  const [originalUrl, setOriginalUrl] = React.useState("");
-  const [slug, setSlug] = React.useState("");
-  const [title, setTitle] = React.useState("");
-  const [expiresAt, setExpiresAt] = React.useState("");
-  const [tags, setTags] = React.useState<string[]>([]);
+  const [originalUrl, setOriginalUrl] = React.useState(link.originalUrl);
+  const [slug, setSlug] = React.useState(link.slug);
+  const [title, setTitle] = React.useState(link.title ?? "");
+  const [expiresAt, setExpiresAt] = React.useState(
+    link.expiresAt ? link.expiresAt.slice(0, 10) : ""
+  );
+  const [tags, setTags] = React.useState<string[]>(link.tags ?? []);
   const [tagInput, setTagInput] = React.useState("");
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
 
-  function resetForm() {
-    setOriginalUrl("");
-    setSlug("");
-    setTitle("");
-    setExpiresAt("");
-    setTags([]);
-    setTagInput("");
-    setError(null);
-  }
-
-  function handleClose() {
-    resetForm();
-    onClose();
-  }
+  React.useEffect(() => {
+    if (open) {
+      setOriginalUrl(link.originalUrl);
+      setSlug(link.slug);
+      setTitle(link.title ?? "");
+      setExpiresAt(link.expiresAt ? link.expiresAt.slice(0, 10) : "");
+      setTags(link.tags ?? []);
+      setTagInput("");
+      setError(null);
+    }
+  }, [open, link]);
 
   function addTag(val: string) {
     const trimmed = val.trim().replace(/,+$/, "");
@@ -72,24 +75,42 @@ export default function CreateLinkDialog({ open, onClose }: CreateLinkDialogProp
     e.preventDefault();
     if (tagInput.trim()) addTag(tagInput);
     setError(null);
-    setLoading(true);
 
+    const newSlug = slug.trim();
+    const slugChanged = newSlug !== link.slug;
+    if (
+      slugChanged &&
+      !confirm(
+        `Changing the slug will make the old URL (/${link.slug}) stop working. Continue?`
+      )
+    ) {
+      return;
+    }
+
+    setLoading(true);
     try {
-      await jorh.links.create({
-        originalUrl,
-        slug: slug.trim() || undefined,
+      const updated = await jorh.links.update(link.slug, {
+        originalUrl: originalUrl.trim(),
+        slug: newSlug || undefined,
         title: title.trim() || undefined,
-        tags: tags.length > 0 ? tags : undefined,
-        expiresAt: expiresAt ? new Date(expiresAt).toISOString() : undefined,
+        tags,
+        expiresAt: expiresAt ? new Date(expiresAt).toISOString() : null,
       });
+
       await qc.invalidateQueries({ queryKey: ["links"] });
-      toast("Link created successfully!", "success");
-      handleClose();
+      await qc.invalidateQueries({ queryKey: ["link", link.slug] });
+
+      toast("Link updated!", "success");
+      onClose();
+
+      if (slugChanged && updated.result?.slug) {
+        void navigate({ to: "/links/$slug", params: { slug: updated.result.slug } });
+      }
     } catch (err) {
       if (err instanceof ApiError) {
         setError(err.message);
       } else {
-        setError("Failed to create link. Please try again.");
+        setError("Failed to update link. Please try again.");
       }
     } finally {
       setLoading(false);
@@ -101,22 +122,21 @@ export default function CreateLinkDialog({ open, onClose }: CreateLinkDialogProp
   const minDate = tomorrow.toISOString().slice(0, 10);
 
   return (
-    <Dialog open={open} onClose={handleClose}>
+    <Dialog open={open} onClose={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create new link</DialogTitle>
+          <DialogTitle>Edit link</DialogTitle>
           <DialogDescription>
-            Shorten a URL and optionally set a custom slug.
+            Update the destination URL, slug, title, tags, or expiry.
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="originalUrl">Destination URL *</Label>
+            <Label htmlFor="edit-originalUrl">Destination URL *</Label>
             <Input
-              id="originalUrl"
+              id="edit-originalUrl"
               type="url"
-              placeholder="https://example.com/very/long/url"
               value={originalUrl}
               onChange={(e) => setOriginalUrl(e.target.value)}
               required
@@ -125,12 +145,11 @@ export default function CreateLinkDialog({ open, onClose }: CreateLinkDialogProp
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="slug">Custom slug (optional)</Label>
+            <Label htmlFor="edit-slug">Slug</Label>
             <div className="flex items-center gap-2">
               <span className="text-sm text-slate-400">jorh.io/</span>
               <Input
-                id="slug"
-                placeholder="my-link"
+                id="edit-slug"
                 value={slug}
                 onChange={(e) => setSlug(e.target.value)}
                 className="flex-1"
@@ -139,9 +158,9 @@ export default function CreateLinkDialog({ open, onClose }: CreateLinkDialogProp
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="title">Title (optional)</Label>
+            <Label htmlFor="edit-title">Title (optional)</Label>
             <Input
-              id="title"
+              id="edit-title"
               placeholder="My awesome link"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -178,14 +197,23 @@ export default function CreateLinkDialog({ open, onClose }: CreateLinkDialogProp
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="expiresAt">Expiry date (optional)</Label>
+            <Label htmlFor="edit-expiresAt">Expiry date (optional)</Label>
             <Input
-              id="expiresAt"
+              id="edit-expiresAt"
               type="date"
               value={expiresAt}
               min={minDate}
               onChange={(e) => setExpiresAt(e.target.value)}
             />
+            {expiresAt && (
+              <button
+                type="button"
+                className="text-xs text-slate-400 hover:text-rose-500 underline"
+                onClick={() => setExpiresAt("")}
+              >
+                Remove expiry
+              </button>
+            )}
           </div>
 
           {error && (
@@ -198,7 +226,7 @@ export default function CreateLinkDialog({ open, onClose }: CreateLinkDialogProp
             <Button
               type="button"
               variant="outline"
-              onClick={handleClose}
+              onClick={onClose}
               disabled={loading}
             >
               Cancel
@@ -208,7 +236,7 @@ export default function CreateLinkDialog({ open, onClose }: CreateLinkDialogProp
               disabled={loading || !originalUrl}
               className="bg-indigo-600 hover:bg-indigo-700 text-white"
             >
-              {loading ? "Creating..." : "Create link"}
+              {loading ? "Saving..." : "Save changes"}
             </Button>
           </div>
         </form>
