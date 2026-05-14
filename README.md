@@ -20,6 +20,7 @@ A production-grade URL shortening platform built as a **Turborepo monorepo**. Fi
 - [Docker](#docker)
 - [CI/CD](#cicd)
 - [Project Decisions](#project-decisions)
+- [License](#license)
 
 ---
 
@@ -848,3 +849,10 @@ Distributing JWT signing secrets to individual services couples them to the auth
 
 **Why Turborepo + pnpm?**  
 Turbo's task graph caches build outputs based on file content. When only one package changes, only affected services rebuild. Combined with Docker's layer cache and pnpm's content-addressed store, incremental CI builds remain fast as the repo grows.
+
+---
+
+## License
+
+MIT © 2026 [Subhan F.](https://github.com/subhan-f)  
+See [LICENSE](./LICENSE) for the full text.
