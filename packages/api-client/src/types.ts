@@ -11,10 +11,9 @@ export interface Link {
   slug: string;
   originalUrl: string;
   title?: string;
-  tags?: string[];
-  isActive?: boolean;
+  tags: string[];
+  isActive: boolean;
   expiresAt?: string;
-  userId?: string;
   createdAt: string;
   updatedAt: string;
 }

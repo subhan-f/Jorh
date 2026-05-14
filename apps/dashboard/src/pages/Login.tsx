@@ -30,7 +30,7 @@ export default function Login() {
         role: user.role,
         avatar: user.avatar,
       });
-      // Invalidate router context
+      router.update({ context: { isAuthed: true } });
       await router.invalidate();
       await navigate({ to: "/links" });
     } catch (err) {

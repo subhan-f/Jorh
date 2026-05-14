@@ -19,7 +19,6 @@
     "@repo/shared-errors": "workspace:*",
     "@repo/shared-logger": "workspace:*",
     "@repo/shared-messaging": "workspace:*",
-    "cookie-parser": "^1.4.7",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "geoip-lite": "^2.0.2",

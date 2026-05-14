@@ -5,6 +5,6 @@ import linkStatsRoutes from "./linkStats.routes.js";
 const router = express.Router();
 
 router.use("/clicks", clickRoutes);
-router.use("/analytics", linkStatsRoutes);
+router.use("/stats", linkStatsRoutes);
 
 export default router;

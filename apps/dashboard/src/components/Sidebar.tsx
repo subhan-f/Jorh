@@ -18,7 +18,8 @@ export default function Sidebar() {
 
   function handleLogout() {
     clearAuth();
-    void router.navigate({ to: "/login" });
+    router.update({ context: { isAuthed: false } });
+    void router.invalidate().then(() => router.navigate({ to: "/login" }));
   }
 
   return (

@@ -8,19 +8,19 @@ const authMiddleware = createAuthMiddleware(AUTH_SERVICE_URL);
 
 const linksRouter = Router();
 
-// Get all links for the authenticated user
+// GET all links for the authenticated user
 linksRouter.get("/", authMiddleware, linkController.handleGetLinks);
 
-// Create a new short link
-linksRouter.post("/", authMiddleware, linkController.handleCreateLink);
-
-// Get a single link by slug
+// GET a single link by slug
 linksRouter.get("/:slug", authMiddleware, linkController.handleGetLink);
 
-// PATCH to update
+// POST to create a new short link
+linksRouter.post("/", authMiddleware, linkController.handleCreateLink);
+
+// PATCH to update short link details
 linksRouter.patch("/:slug", authMiddleware, linkController.handleUpdateLink);
 
-// Delete a link
+// DELETE to delete a short link
 linksRouter.delete("/:slug", authMiddleware, linkController.handleDeleteLink);
 
 export default linksRouter;

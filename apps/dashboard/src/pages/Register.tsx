@@ -31,6 +31,7 @@ export default function Register() {
         role: user.role,
         avatar: user.avatar,
       });
+      router.update({ context: { isAuthed: true } });
       await router.invalidate();
       await navigate({ to: "/links" });
     } catch (err) {

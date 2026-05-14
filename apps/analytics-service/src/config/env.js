@@ -8,6 +8,4 @@ export const env = createConfig(
   { required: ["MONGO_URI", "RABBITMQ_URI"] },
 );
 
-export const { PORT, MONGO_URI, RABBITMQ_URI, AUTH_SERVICE_URL, NODE_ENV, cookieOptions } = env;
-
-export const ACCESS_COOKIE_OPTIONS = cookieOptions.access;
+export const { PORT, MONGO_URI, RABBITMQ_URI, AUTH_SERVICE_URL, NODE_ENV } = env;

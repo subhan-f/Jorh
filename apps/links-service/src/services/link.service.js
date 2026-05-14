@@ -10,8 +10,16 @@ class LinkService {
     return LinkModel.findOne({ slug, user: userId });
   };
 
-  createLink = async ({ originalUrl, tags = [], title = null, expiresAt, userId }) => {
+  createLink = async ({
+    originalUrl,
+    tags = [],
+    title = null,
+    expiresAt,
+    slug,
+    userId,
+  }) => {
     const link = await LinkModel.create({
+      slug,
       originalUrl,
       title,
       tags,
@@ -30,7 +38,11 @@ class LinkService {
   };
 
   updateLink = async (slug, userId, newData) => {
-    const link = await LinkModel.findOneAndUpdate({ slug, user: userId }, newData, { returnDocument: "after" });
+    const link = await LinkModel.findOneAndUpdate(
+      { slug, user: userId },
+      newData,
+      { returnDocument: "after" },
+    );
     if (!link) throw new Error("Link not found");
 
     await linkPublisher.publishUpdatedLink({

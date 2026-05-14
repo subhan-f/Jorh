@@ -38,9 +38,6 @@ importers:
       '@repo/shared-messaging':
         specifier: workspace:*
         version: link:../../packages/shared-messaging
-      cookie-parser:
-        specifier: ^1.4.7
-        version: 1.4.7
       dotenv:
         specifier: ^17.4.2
         version: 17.4.2
@@ -277,9 +274,6 @@ importers:
       bcrypt:
         specifier: ^6.0.0
         version: 6.0.0
-      cookie-parser:
-        specifier: ^1.4.7
-        version: 1.4.7
       dotenv:
         specifier: ^17.4.2
         version: 17.4.2

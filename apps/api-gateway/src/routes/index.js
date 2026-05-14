@@ -17,7 +17,6 @@ router.use("/users", createProxy(AUTH_SERVICE_URL));
 router.use("/links", createProxy(LINKS_SERVICE_URL));
 
 // Analytics service
-router.use("/clicks", createProxy(ANALYTICS_SERVICE_URL));
 router.use("/analytics", createProxy(ANALYTICS_SERVICE_URL));
 
 export default router;

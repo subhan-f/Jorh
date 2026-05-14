@@ -1,10 +1,9 @@
 import { Router } from "express";
 import clickController from "../controllers/click.controller.js";
+import { authMiddleware } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router.get("/:slug", clickController.handleGetClicks);
-router.post("/", clickController.handleRecordClick);
-router.post("/:slug", clickController.handleRecordClick);
+router.get("/:slug", authMiddleware, clickController.handleGetClicks);
 
 export default router;

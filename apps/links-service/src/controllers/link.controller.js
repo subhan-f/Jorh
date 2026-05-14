@@ -4,11 +4,11 @@ class LinkController {
   handleCreateLink = async (req, res, next) => {
     try {
       const { user } = req;
-      const { originalUrl, tags, title } = req.body;
+      const { originalUrl, tags, title, slug } = req.body;
 
       if (!originalUrl) throw new Error("Original URL is required");
 
-      const link = await linkService.createLink({ originalUrl, tags, title, userId: user._id });
+      const link = await linkService.createLink({ originalUrl, tags, title, slug, userId: user._id });
 
       res.status(201).json({
         success: true,
