@@ -37,7 +37,7 @@ export default function App() {
     <div className="min-h-screen bg-white text-slate-900">
       {/* Navbar */}
       <header className="sticky top-0 z-40 border-b border-slate-100 bg-white/80 backdrop-blur-sm">
-        <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+        <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
           <a href="/" className="flex items-center gap-2 text-xl font-bold text-indigo-600">
             <Link2 className="h-5 w-5" />
             Jorh
@@ -58,7 +58,7 @@ export default function App() {
 
       <main>
         {/* Hero */}
-        <section className="relative overflow-hidden bg-gradient-to-b from-indigo-50 via-white to-white pt-20 pb-28">
+        <section className="relative overflow-hidden bg-gradient-to-b from-indigo-50 via-white to-white pt-12 pb-16 sm:pt-20 sm:pb-28">
           {/* Background decoration */}
           <div className="pointer-events-none absolute inset-0 overflow-hidden">
             <div className="absolute -top-40 left-1/2 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-indigo-100/60 blur-3xl" />
@@ -70,7 +70,7 @@ export default function App() {
               Fast, reliable URL shortening
             </div>
 
-            <h1 className="mb-6 text-5xl font-extrabold tracking-tight text-slate-900 sm:text-6xl md:text-7xl">
+            <h1 className="mb-6 text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl md:text-7xl">
               Shorten.{" "}
               <span className="text-indigo-600">Share.</span>{" "}
               Track.
@@ -122,7 +122,7 @@ export default function App() {
         </section>
 
         {/* Features */}
-        <section className="py-24">
+        <section className="py-16 sm:py-24">
           <div className="mx-auto max-w-6xl px-6">
             <div className="mb-16 text-center">
               <h2 className="mb-4 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
@@ -185,7 +185,7 @@ export default function App() {
 
       {/* Footer */}
       <footer className="border-t border-slate-100 bg-white py-8">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 sm:px-6">
           <a
             href="/"
             className="flex items-center gap-1.5 text-sm font-semibold text-indigo-600"

@@ -177,9 +177,9 @@ export default function LinkDetail() {
             </div>
           ) : link ? (
             <dl className="space-y-3 text-sm">
-              <div className="flex items-start gap-3">
-                <dt className="w-28 shrink-0 font-medium text-slate-500">Short URL</dt>
-                <dd className="flex items-center gap-2 text-indigo-600">
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:gap-3">
+                <dt className="text-xs font-semibold uppercase tracking-wide text-slate-400 sm:w-28 sm:shrink-0 sm:text-sm sm:font-medium sm:normal-case sm:tracking-normal sm:text-slate-500">Short URL</dt>
+                <dd className="flex flex-wrap items-center gap-2 text-indigo-600 min-w-0">
                   <a
                     href={shortUrl}
                     target="_blank"
@@ -193,13 +193,13 @@ export default function LinkDetail() {
                 </dd>
               </div>
 
-              <div className="flex items-start gap-3">
-                <dt className="w-28 shrink-0 font-medium text-slate-500">Destination</dt>
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:gap-3">
+                <dt className="text-xs font-semibold uppercase tracking-wide text-slate-400 sm:w-28 sm:shrink-0 sm:text-sm sm:font-medium sm:normal-case sm:tracking-normal sm:text-slate-500">Destination</dt>
                 <dd className="text-slate-700 break-all">{link.originalUrl}</dd>
               </div>
 
-              <div className="flex items-start gap-3">
-                <dt className="w-28 shrink-0 font-medium text-slate-500">Status</dt>
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:gap-3">
+                <dt className="text-xs font-semibold uppercase tracking-wide text-slate-400 sm:w-28 sm:shrink-0 sm:text-sm sm:font-medium sm:normal-case sm:tracking-normal sm:text-slate-500">Status</dt>
                 <dd className="flex items-center gap-2">
                   {link.isActive === false ? (
                     <Badge variant="warning" size="sm">Inactive</Badge>
@@ -233,8 +233,8 @@ export default function LinkDetail() {
                 </div>
               )}
 
-              <div className="flex items-start gap-3">
-                <dt className="w-28 shrink-0 font-medium text-slate-500">Created</dt>
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:gap-3">
+                <dt className="text-xs font-semibold uppercase tracking-wide text-slate-400 sm:w-28 sm:shrink-0 sm:text-sm sm:font-medium sm:normal-case sm:tracking-normal sm:text-slate-500">Created</dt>
                 <dd className="text-slate-700">
                   {new Date(link.createdAt).toLocaleString("en-US", {
                     dateStyle: "medium",
@@ -243,8 +243,8 @@ export default function LinkDetail() {
                 </dd>
               </div>
 
-              <div className="flex items-start gap-3">
-                <dt className="w-28 shrink-0 font-medium text-slate-500">Expires</dt>
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:gap-3">
+                <dt className="text-xs font-semibold uppercase tracking-wide text-slate-400 sm:w-28 sm:shrink-0 sm:text-sm sm:font-medium sm:normal-case sm:tracking-normal sm:text-slate-500">Expires</dt>
                 {editingExpiry ? (
                   <dd className="flex items-center gap-2 flex-wrap">
                     <Input

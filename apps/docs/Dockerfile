@@ -22,4 +22,4 @@ ENV PORT=8080
 COPY --from=builder /app .
 WORKDIR /app/apps/docs
 EXPOSE 8080
-CMD ["/bin/sh", "-c", "exec /app/node_modules/.bin/remix-serve ./build/server/index.js"]
+CMD ["/bin/sh", "-c", "exec ./node_modules/.bin/remix-serve ./build/server/index.js"]

@@ -23,6 +23,7 @@ export function ParamTable({ title, params }: Props) {
   return (
     <div className="mt-6">
       <h4 className="text-sm font-semibold text-slate-700 mb-3">{title}</h4>
+      <div className="overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
@@ -67,6 +68,7 @@ export function ParamTable({ title, params }: Props) {
           ))}
         </TableBody>
       </Table>
+      </div>
     </div>
   );
 }

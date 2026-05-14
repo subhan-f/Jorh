@@ -77,6 +77,7 @@ export function EndpointSection({ endpoint }: Props) {
       {endpoint.responses.errors.length > 0 && (
         <div className="mt-6">
           <h4 className="text-sm font-semibold text-slate-700 mb-3">Possible Errors</h4>
+          <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -95,6 +96,7 @@ export function EndpointSection({ endpoint }: Props) {
               ))}
             </TableBody>
           </Table>
+          </div>
         </div>
       )}
 
