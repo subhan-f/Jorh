@@ -1,5 +1,6 @@
 import LinkModel from "../models/link.model.js";
 import linkPublisher from "./publishers/link.publisher.js";
+import { ConflictError } from "@repo/shared-errors";
 
 class LinkService {
   getLinks = async (userId) => {
@@ -18,14 +19,26 @@ class LinkService {
     slug,
     userId,
   }) => {
-    const link = await LinkModel.create({
-      slug,
-      originalUrl,
-      title,
-      tags,
-      expiresAt: expiresAt ? new Date(expiresAt) : undefined,
-      user: userId,
-    });
+    let link;
+    try {
+      link = await LinkModel.create({
+        slug,
+        originalUrl,
+        title,
+        tags,
+        expiresAt: expiresAt ? new Date(expiresAt) : undefined,
+        user: userId,
+      });
+    } catch (err) {
+      if (err.code === 11000) {
+        throw new ConflictError(
+          slug
+            ? `The slug "${slug}" is already taken. Please choose a different one.`
+            : "Failed to generate a unique slug. Please try again.",
+        );
+      }
+      throw err;
+    }
 
     await linkPublisher.publishCreatedLink({
       slug: link.slug,
