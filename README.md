@@ -25,39 +25,58 @@ A production-grade URL shortening platform built as a **Turborepo monorepo**. Fi
 
 ## Architecture
 
-```
-                        ┌──────────────────────────────────────────┐
-                        │             API Gateway :3000            │
-                        │  (helmet · cors · rate-limit · proxy)    │
-                        └────────┬───────────────────┬─────────────┘
-                                 │  /api/*           │  /:slug
-              ┌──────────────────┼───────────────────┼───────────────────┐
-              │                  │                   │                   │
-   ┌──────────▼──────┐  ┌────────▼────────┐  ┌───────▼──────┐  ┌─────────▼────────┐
-   │  auth-service   │  │  links-service  │  │  analytics-  │  │ redirect-service │
-   │
-   │    :3001        │  │     :3002       │  │  service     │  │      :3004       │
-   │
-   │  Users · JWT    │  │  Link CRUD      │  │  :3003       │  │  /:slug → 301    │
-   │  Blacklist      │  │  nanoid slugs   │  │  Clicks ·    │  │  Mapping cache   │
-   └──────────┬──────┘  └────────┬────────┘  │  Stats ·     │  └────────┬─────────┘
-              │                  │           │  Geo · UA    │           │
-              │                  │           └─────┬────────┘           │
-              │         ┌────────▼─────────────────▼────────────────────▼────────┐
-              │         │                      RabbitMQ                          │
-              │         │  jorh.link.events (fanout)  jorh.click.events (fanout) │
-              │         └────────────────────────────────────────────────────────┘
-              │
-   ┌──────────▼─────────────────────────────────────┐
-   │                     MongoDB                    │
-   │   Users · BlackListTokens · Links · Clicks     │
-   │            · LinkStats · Mappings              │
-   └────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    subgraph Frontends
+        WEB["web :4000\nVite + React\nLanding page"]
+        DASH["dashboard :4001\nVite + React + TanStack\nUser dashboard"]
+        DOCS["docs :4002\nRemix SSR\nAPI docs"]
+    end
 
-Frontend
-   ├── web        :4000  Landing page (Vite + React)
-   ├── dashboard  :4001  User dashboard (Vite + React + TanStack)
-   └── docs       :4002  API docs (Remix SSR)
+    subgraph GW["API Gateway :3000"]
+        GWN["helmet · cors · rate-limit\n/api/auth  /api/users → auth-service\n/api/links → links-service\n/api/analytics → analytics-service\n/:slug → redirect-service"]
+    end
+
+    subgraph Services
+        AUTH["auth-service :3001\nUsers · JWT\nBlacklist tokens"]
+        LINKS["links-service :3002\nLink CRUD\nnanoid slugs"]
+        ANALYTICS["analytics-service :3003\nClicks · LinkStats\nGeo · UA enrichment"]
+        REDIRECT["redirect-service :3004\n/:slug → 301\nMapping read-model"]
+    end
+
+    subgraph MQ["RabbitMQ"]
+        LE["jorh.link.events\n(fanout)"]
+        CE["jorh.click.events\n(fanout)"]
+    end
+
+    subgraph DBs["MongoDB"]
+        AUTHDB[("Users\nBlackListTokens")]
+        LINKSDB[("Links")]
+        ANALYTICSDB[("Clicks timeseries\nLinkStats")]
+        REDIRECTDB[("Mappings")]
+    end
+
+    WEB & DASH & DOCS -->|VITE_API_URL| GW
+
+    GW --> AUTH
+    GW --> LINKS
+    GW --> ANALYTICS
+    GW --> REDIRECT
+
+    LINKS -.->|"HTTP: validate token"| AUTH
+    ANALYTICS -.->|"HTTP: validate token"| AUTH
+
+    LINKS -->|"publish create/update/delete"| LE
+    REDIRECT -->|"publish click event"| CE
+
+    LE -->|"redirect.link-events"| REDIRECT
+    LE -->|"analytics.link-events"| ANALYTICS
+    CE -->|"analytics.click-events"| ANALYTICS
+
+    AUTH --- AUTHDB
+    LINKS --- LINKSDB
+    ANALYTICS --- ANALYTICSDB
+    REDIRECT --- REDIRECTDB
 ```
 
 ### Key Design Decisions
