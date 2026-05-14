@@ -172,8 +172,8 @@ npm install -g pnpm@11.1.1
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/subhan-f/Jorh.git
-cd Jorh
+git clone https://github.com/subhan-f/jorh.git
+cd jorh
 pnpm install
 ```
 
