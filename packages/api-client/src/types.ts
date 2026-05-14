@@ -11,7 +11,10 @@ export interface Link {
   slug: string;
   originalUrl: string;
   title?: string;
-  userId: string;
+  tags?: string[];
+  isActive?: boolean;
+  expiresAt?: string;
+  userId?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -35,19 +38,28 @@ export interface Click {
 
 export interface ApiResponse<T = unknown> {
   success: boolean;
-  data: T;
+  result: T;
   message?: string;
 }
 
 export interface PaginatedResponse<T = unknown> {
   success: boolean;
-  data: T[];
+  result: T[];
   total: number;
   page: number;
   limit: number;
+  message?: string;
 }
 
 // Auth
+export interface AuthResult {
+  name: string;
+  email: string;
+  role: string;
+  avatar?: string;
+  accessToken: string;
+}
+
 export interface RegisterBody {
   name: string;
   email: string;

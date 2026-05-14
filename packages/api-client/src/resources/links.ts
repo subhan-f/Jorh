@@ -1,12 +1,11 @@
 import type { JorhClient } from "../client";
-import type { ApiResponse, CreateLinkBody, Link, PaginatedResponse, UpdateLinkBody } from "../types";
+import type { ApiResponse, CreateLinkBody, Link, UpdateLinkBody } from "../types";
 
 export class LinksResource {
   constructor(private client: JorhClient) {}
 
-  list(params?: { page?: number; limit?: number }) {
-    const qs = params ? `?${new URLSearchParams(params as Record<string, string>).toString()}` : "";
-    return this.client.get<PaginatedResponse<Link>>(`/api/links${qs}`);
+  list() {
+    return this.client.get<ApiResponse<Link[]>>("/api/links/");
   }
 
   create(body: CreateLinkBody) {
