@@ -18,8 +18,7 @@ RUN pnpm --filter=docs build
 FROM node:alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
-COPY --from=builder /app/apps/docs/build ./build
-COPY --from=builder /app/apps/docs/package.json ./package.json
-COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app .
+WORKDIR /app/apps/docs
 EXPOSE 3000
-CMD ["node_modules/.bin/remix-serve", "./build/server/index.js"]
+CMD ["/app/node_modules/.bin/remix-serve", "./build/server/index.js"]
