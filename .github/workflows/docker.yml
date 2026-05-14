@@ -33,6 +33,12 @@ jobs:
             dockerfile: apps/analytics-service/Dockerfile
           - service: redirect-service
             dockerfile: apps/redirect-service/Dockerfile
+          - service: web
+            dockerfile: apps/web/Dockerfile
+          - service: dashboard
+            dockerfile: apps/dashboard/Dockerfile
+          - service: docs
+            dockerfile: apps/docs/Dockerfile
 
     steps:
       - name: Checkout
@@ -60,6 +66,24 @@ jobs:
             type=sha,prefix=sha-,format=short
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
 
+      - name: Resolve build args
+        id: build-args
+        run: |
+          {
+            echo 'value<<EOF'
+            case "${{ matrix.service }}" in
+              web)
+                echo "VITE_API_URL=${{ vars.VITE_API_URL }}"
+                echo "VITE_DASHBOARD_URL=${{ vars.VITE_DASHBOARD_URL }}"
+                echo "VITE_DOCS_URL=${{ vars.VITE_DOCS_URL }}"
+                ;;
+              dashboard|docs)
+                echo "VITE_API_URL=${{ vars.VITE_API_URL }}"
+                ;;
+            esac
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
       - name: Build and push
         id: build
         uses: docker/build-push-action@v7
@@ -69,6 +93,7 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: ${{ steps.build-args.outputs.value }}
           cache-from: type=gha,scope=${{ matrix.service }}
           cache-to: type=gha,scope=${{ matrix.service }},mode=max
 
