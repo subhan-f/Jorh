@@ -19,11 +19,14 @@ export interface Link {
 }
 
 export interface LinkStats {
-  linkId: string;
   slug: string;
   totalClicks: number;
   uniqueClicks: number;
-  lastClickAt?: string;
+  lastClickAt: string | null;
+  dailyClicks: Array<{ date: string; count: number }>;
+  topReferrers: Array<{ referrer: string; count: number }>;
+  topCountries: Array<{ country: string; count: number }>;
+  devices: { mobile: number; desktop: number; tablet: number };
 }
 
 export interface Click {
@@ -32,7 +35,12 @@ export interface Click {
   ip?: string;
   userAgent?: string;
   referrer?: string;
-  createdAt: string;
+  country?: string | null;
+  city?: string | null;
+  browser?: string | null;
+  os?: string | null;
+  deviceType?: string;
+  timestamp: string;
 }
 
 export interface ApiResponse<T = unknown> {

@@ -2,6 +2,7 @@ import geoip from "geoip-lite";
 import { UAParser } from "ua-parser-js";
 import ClickModel from "../models/click.model.js";
 import linkStatsService from "./linkStats.service.js";
+import logger from "../config/logger.js";
 
 class ClickService {
   recordClick = async (clickData) => {
@@ -19,9 +20,13 @@ class ClickService {
 
     const click = await ClickModel.create(enriched);
 
+    // Check uniqueness: if this is the only click from this IP for this slug, it's unique
+    const ipClickCount = await ClickModel.countDocuments({ slug: click.slug, ip: click.ip });
+    const isUnique = ipClickCount === 1;
+
     linkStatsService
-      .updateStats(click.slug, click)
-      .catch((err) => console.error("[analytics] stats update failed:", err.message));
+      .updateStats(click.slug, click, isUnique)
+      .catch((err) => logger.error({ err: err.message, slug: click.slug }, "stats update failed"));
 
     return click;
   };

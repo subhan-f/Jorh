@@ -1,7 +1,7 @@
 import LinkStats from "../models/linkStats.model.js";
 
 class LinkStatsService {
-  async updateStats(slug, click) {
+  async updateStats(slug, click, isUnique = false) {
     const today = new Date().toISOString().slice(0, 10);
     const deviceField =
       click.deviceType === "mobile" ? "mobile"
@@ -18,6 +18,8 @@ class LinkStatsService {
         {
           $set: {
             totalClicks: { $add: [{ $ifNull: ["$totalClicks", 0] }, 1] },
+            uniqueClicks: { $add: [{ $ifNull: ["$uniqueClicks", 0] }, isUnique ? 1 : 0] },
+            lastClickAt: new Date(),
 
             dailyClicks: {
               $cond: {
@@ -64,7 +66,7 @@ class LinkStatsService {
           },
         },
       ],
-      { upsert: true, returnDocument: "after" },
+      { upsert: true, returnDocument: "after", updatePipeline: true },
     );
   }
 

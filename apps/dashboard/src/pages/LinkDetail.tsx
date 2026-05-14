@@ -217,7 +217,7 @@ export default function LinkDetail() {
             {clicks.map((click) => (
               <TableRow key={click._id}>
                 <TableCell className="whitespace-nowrap text-slate-700">
-                  {new Date(click.createdAt).toLocaleString("en-US", {
+                  {new Date(click.timestamp).toLocaleString("en-US", {
                     dateStyle: "short",
                     timeStyle: "short",
                   })}

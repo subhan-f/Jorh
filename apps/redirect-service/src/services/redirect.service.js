@@ -1,5 +1,6 @@
 import mappingService from "./mapping.service.js";
 import { publishClick } from "./publishers/click.publisher.js";
+import logger from "../config/logger.js";
 
 class RedirectService {
   redirectToOriginalUrl = async (slug, ip, userAgent, referrer) => {
@@ -9,7 +10,7 @@ class RedirectService {
 
     // fire-and-forget — don't block the redirect on analytics
     publishClick({ slug, ip, userAgent, referrer }).catch((err) =>
-      console.error("[redirect] failed to publish click:", err.message),
+      logger.error({ err: err.message, slug }, "failed to publish click"),
     );
 
     return mapping.originalUrl;

@@ -6,6 +6,7 @@ import redirectController from "./controllers/redirect.controller.js";
 import logger from "./config/logger.js";
 
 const app = express();
+app.set("trust proxy", true);
 
 app.use(helmet());
 app.use(createHttpLogger(logger));
