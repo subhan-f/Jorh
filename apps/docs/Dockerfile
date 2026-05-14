@@ -18,7 +18,8 @@ RUN pnpm --filter=docs build
 FROM node:alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
+ENV PORT=8080
 COPY --from=builder /app .
 WORKDIR /app/apps/docs
-EXPOSE 3000
-CMD ["/app/node_modules/.bin/remix-serve", "./build/server/index.js"]
+EXPOSE 8080
+CMD ["/bin/sh", "-c", "exec /app/node_modules/.bin/remix-serve ./build/server/index.js"]
