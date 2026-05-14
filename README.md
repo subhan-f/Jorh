@@ -26,57 +26,63 @@ A production-grade URL shortening platform built as a **Turborepo monorepo**. Fi
 ## Architecture
 
 ```mermaid
+
 graph TD
-    subgraph Frontends
-        WEB["web :4000\nVite + React\nLanding page"]
-        DASH["dashboard :4001\nVite + React + TanStack\nUser dashboard"]
-        DOCS["docs :4002\nRemix SSR\nAPI docs"]
-    end
 
-    subgraph GW["API Gateway :3000"]
-        GWN["helmet · cors · rate-limit\n/api/auth  /api/users → auth-service\n/api/links → links-service\n/api/analytics → analytics-service\n/:slug → redirect-service"]
-    end
+%% ----- Frontends -----
+WEB["web :4000<br/>Vite + React (Landing)"]
+DASH["dashboard :4001<br/>Vite + React + TanStack"]
+DOCS["docs :4002<br/>Remix SSR (API docs)"]
 
-    subgraph Services
-        AUTH["auth-service :3001\nUsers · JWT\nBlacklist tokens"]
-        LINKS["links-service :3002\nLink CRUD\nnanoid slugs"]
-        ANALYTICS["analytics-service :3003\nClicks · LinkStats\nGeo · UA enrichment"]
-        REDIRECT["redirect-service :3004\n/:slug → 301\nMapping read-model"]
-    end
+%% ----- Gateway -----
+GW["API Gateway :3000<br/>helmet · cors · rate‑limit"]
 
-    subgraph MQ["RabbitMQ"]
-        LE["jorh.link.events\n(fanout)"]
-        CE["jorh.click.events\n(fanout)"]
-    end
+%% ----- Services -----
+AUTH["auth-service :3001<br/>Users · JWT · blacklist"]
+LINKS["links-service :3002<br/>Link CRUD · nanoid slugs"]
+ANALYTICS["analytics-service :3003<br/>Clicks · stats · Geo/UA enrich"]
+REDIRECT["redirect-service :3004<br/>/:slug → 301"]
 
-    subgraph DBs["MongoDB"]
-        AUTHDB[("Users\nBlackListTokens")]
-        LINKSDB[("Links")]
-        ANALYTICSDB[("Clicks timeseries\nLinkStats")]
-        REDIRECTDB[("Mappings")]
-    end
+%% ----- Message Queue (exchanges) -----
+LE["jorh.link.events (fanout)"]
+CE["jorh.click.events (fanout)"]
 
-    WEB & DASH & DOCS -->|VITE_API_URL| GW
+%% ----- Databases -----
+AUTHDB[("Users · BlackListTokens")]
+LINKSDB[("Links")]
+ANALYTICSDB[("Clicks (timeseries) · LinkStats")]
+REDIRECTDB[("Mappings (read‑model)")]
 
-    GW --> AUTH
-    GW --> LINKS
-    GW --> ANALYTICS
-    GW --> REDIRECT
+%% ----- Frontend → Gateway -----
+WEB & DASH & DOCS -->|"VITE_API_URL"| GW
 
-    LINKS -.->|"HTTP: validate token"| AUTH
-    ANALYTICS -.->|"HTTP: validate token"| AUTH
+%% ----- Gateway → Services -----
+GW --> AUTH
+GW --> LINKS
+GW --> ANALYTICS
+GW --> REDIRECT
 
-    LINKS -->|"publish create/update/delete"| LE
-    REDIRECT -->|"publish click event"| CE
+%% ----- Service → Auth (validation) -----
+LINKS -.->|"validate token (HTTP)"| AUTH
+ANALYTICS -.->|"validate token (HTTP)"| AUTH
 
-    LE -->|"redirect.link-events"| REDIRECT
-    LE -->|"analytics.link-events"| ANALYTICS
-    CE -->|"analytics.click-events"| ANALYTICS
+%% ----- Service → RabbitMQ (publish) -----
+LINKS -->|"publish create/update/delete"| LE
+REDIRECT -->|"publish click event"| CE
 
-    AUTH --- AUTHDB
-    LINKS --- LINKSDB
-    ANALYTICS --- ANALYTICSDB
-    REDIRECT --- REDIRECTDB
+%% ----- RabbitMQ → Services (consume) -----
+LE -->|"link‑events"| REDIRECT
+LE -->|"link‑events"| ANALYTICS
+CE -->|"click‑events"| ANALYTICS
+
+%% ----- Service → Database -----
+AUTH --- AUTHDB
+LINKS --- LINKSDB
+ANALYTICS --- ANALYTICSDB
+REDIRECT --- REDIRECTDB
+
+%% -----
+
 ```
 
 ### Key Design Decisions
