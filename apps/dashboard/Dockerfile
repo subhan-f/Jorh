@@ -15,7 +15,7 @@ ARG VITE_API_URL
 ENV VITE_API_URL=$VITE_API_URL
 RUN pnpm --filter=dashboard build
 
-FROM nginx:alpine AS runner
+FROM nginx:1.31.0-alpine-slim AS runner
 COPY --from=builder /app/apps/dashboard/dist /usr/share/nginx/html
 COPY apps/dashboard/nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
